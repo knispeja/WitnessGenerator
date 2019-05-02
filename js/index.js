@@ -1,0 +1,1 @@
+const puzzle = new Puzzle();
