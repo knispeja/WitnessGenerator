@@ -39,10 +39,12 @@ class Edge {
 
 class Node {
 	constructor() {
-		this.north = null;
-		this.east = null;
-		this.south = null;
-		this.west = null;
+		var border_edge_vert = new Edge(this, null, true);
+		var border_edge_horz = new Edge(this, null, false);
+		this.north = border_edge_vert;
+		this.east = border_edge_horz;
+		this.south = border_edge_vert;
+		this.west = border_edge_horz;
 
 		this.node_type = NODE_TYPE.NORMAL;
 	}
@@ -54,7 +56,7 @@ class Node {
 			this.west.connects_to(node);
 	}
 
-	connects_to_required_edge() {
+	get_adjacent_required_edges() {
 		// TODO
 	}
 
