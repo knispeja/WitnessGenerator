@@ -58,24 +58,25 @@ class Node {
 		// TODO
 	}
 
-	set_north(node) {
-		this.north = new Edge(this, node, true);
-		node.south = this.north;
-	}
-
-	set_east(node) {
-		this.east = new Edge(this, node, false);
-		node.west = this.east;
-	}
-
-	set_south(node) {
-		this.south = new Edge(this, node, true);
-		node.north = this.south;
-	}
-
-	set_west(node) {
-		this.west = new Edge(this, node, false);
-		node.east = this.west;
+	add_connection(node, direction) {
+		var is_vertical = direction == DIRECTION.NORTH || direction == DIRECTION.SOUTH;
+		var new_edge = new Edge(this, node, is_vertical);
+		if (direction == DIRECTION.NORTH) {
+			this.north = new_edge;
+			node.south = new_edge;
+		}
+		else if (direction == DIRECTION.SOUTH) {
+			node.north = new_edge;
+			this.south = new_edge;
+		}
+		else if (direction == DIRECTION.EAST) {
+			this.east = new_edge;
+			node.west = new_edge;
+		}
+		else {
+			node.east = new_edge;
+			this.west = new_edge;
+		}
 	}
 }
 
@@ -104,7 +105,7 @@ class Puzzle {
 			{
 				var node = new Node();
 				if (x != 0) {
-					node.set_west(this.nodes[x-1][y]);
+					node.add_connection(this.nodes[x-1][y], DIRECTION.WEST);
 
 					// North cell of edge
 					if (y > 0) {
@@ -117,7 +118,7 @@ class Puzzle {
 					}
 				}
 				if (y != 0) {
-					node.set_north(this.nodes[x][y-1]);
+					node.add_connection(this.nodes[x][y-1], DIRECTION.NORTH);
 
 					// West cell of edge
 					if (x > 0) {

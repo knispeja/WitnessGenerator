@@ -5,6 +5,14 @@ const GRID_WIDTH_NODES = GRID_WIDTH_CELLS + 1;
 const GRID_HEIGHT_NODES = GRID_HEIGHT_CELLS + 1;
 
 // Type enums
+const DIRECTION =
+{
+	'NORTH': 0,
+	'EAST': 1,
+	'SOUTH': 2,
+	'WEST': 3
+};
+
 const NODE_TYPE =
 {
 	'NORMAL': 0,
