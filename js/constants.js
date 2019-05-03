@@ -24,7 +24,8 @@ const EDGE_TYPE =
 {
 	'NORMAL': 0,
 	'PELLET': 1,
-	'OBSTACLE': 2
+	'OBSTACLE': 2,
+	'BORDER': 3
 };
 
 const CELL_TYPE =

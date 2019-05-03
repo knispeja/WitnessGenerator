@@ -1,5 +1,9 @@
+function random_value_from_2d_array(array) {
+    return random_value_from_array(random_value_from_array(array));
+}
+
 function random_value_from_array(array) {
-    return random_integer_between(0, array.length - 1);
+    return array[random_integer_between(0, array.length - 1)];
 }
 
 function random_integer_between(min, max) {

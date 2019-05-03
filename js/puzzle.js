@@ -23,13 +23,17 @@ class Edge {
 		this.cell2 = null;
 	}
 
+	is_traversible() {
+		return (this.edge_type != EDGE_TYPE.OBSTACLE && this.edge_type != EDGE_TYPE.BORDER);
+	}
+
 	is_at_border() {
 		return this.node1 == null || this.node2 == null;
 	}
 
 	is_required() {
 		return this.edge_type == EDGE_TYPE.PELLET ||
-			(!is_at_border() && this.node1.has_color_compatible_with(this.node2));
+			(!this.is_at_border() && this.cell1.has_color_compatible_with(this.cell2));
 	}
 
 	connects_to(node) {
@@ -40,7 +44,10 @@ class Edge {
 class Node {
 	constructor() {
 		var border_edge_vert = new Edge(this, null, true);
+		border_edge_vert.edge_type = EDGE_TYPE.BORDER;
 		var border_edge_horz = new Edge(this, null, false);
+		border_edge_horz.edge_type = EDGE_TYPE.BORDER;
+
 		this.north = border_edge_vert;
 		this.east = border_edge_horz;
 		this.south = border_edge_vert;
@@ -56,8 +63,12 @@ class Node {
 			this.west.connects_to(node);
 	}
 
+	get_adjacent_edges() {
+		return [this.north, this.east, this.south, this.west];
+	}
+
 	get_adjacent_required_edges() {
-		// TODO
+		return this.get_adjacent_edges().filter(edge => edge.is_required());
 	}
 
 	add_connection(node, direction) {
@@ -138,7 +149,8 @@ class Puzzle {
 	}
 
 	init_random_puzzle() {
-		this.start_node = random_value_from_array(this.nodes);
+		this.start_node = random_value_from_2d_array(this.nodes);
+		this.start_node.get_adjacent_required_edges();
 		// TODO Generate "whimsical path"
 		// TODO Set end node
 		// TODO Generate pellets
