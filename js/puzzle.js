@@ -42,7 +42,10 @@ class Edge {
 }
 
 class Node {
-	constructor() {
+	constructor(x, y) {
+		this.x = x;
+		this.y = y;
+
 		var border_edge_vert = new Edge(this, null, true);
 		border_edge_vert.edge_type = EDGE_TYPE.BORDER;
 		var border_edge_horz = new Edge(this, null, false);
@@ -116,7 +119,7 @@ class Puzzle {
 			this.nodes[x] = [];
 			for (var y=0; y<GRID_HEIGHT_NODES; y++)
 			{
-				var node = new Node();
+				var node = new Node(x, y);
 				if (x != 0) {
 					node.add_connection(this.nodes[x-1][y], DIRECTION.WEST);
 
