@@ -150,7 +150,7 @@ class Puzzle {
 
 	init_random_puzzle() {
 		this.start_node = random_value_from_2d_array(this.nodes);
-		this.start_node.get_adjacent_required_edges();
+		this.start_node.node_type = NODE_TYPE.START;
 		// TODO Generate "whimsical path"
 		// TODO Set end node
 		// TODO Generate pellets
