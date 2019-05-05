@@ -136,7 +136,12 @@ class Node {
 }
 
 class Puzzle {
-	constructor(draw_config) {
+	constructor(draw_config, cell_count_x, cell_count_y) {
+		this.cell_count_x = cell_count_x;
+		this.cell_count_y = cell_count_y;
+		this.node_count_x = cell_count_x + 1;
+		this.node_count_y = cell_count_y + 1;
+
 		this.draw_config = draw_config;
 		this.start_node = null;
 		this.end_node = null;
@@ -144,20 +149,20 @@ class Puzzle {
 		this.nodes = [];
 
 		// Init cells
-		for (var x=0; x<GRID_WIDTH_CELLS; x++)
+		for (var x=0; x<this.cell_count_x; x++)
 		{
 			this.cells[x] = [];
-			for (var y=0; y<GRID_HEIGHT_CELLS; y++)
+			for (var y=0; y<this.cell_count_y; y++)
 			{
 				this.cells[x][y] = new Cell();
 			}
 		}
 
 		// Init nodes
-		for (var x=0; x<GRID_WIDTH_NODES; x++)
+		for (var x=0; x<this.node_count_x; x++)
 		{
 			this.nodes[x] = [];
-			for (var y=0; y<GRID_HEIGHT_NODES; y++)
+			for (var y=0; y<this.node_count_y; y++)
 			{
 				var node = new Node(x, y);
 				if (x != 0) {
@@ -169,7 +174,7 @@ class Puzzle {
 					}
 
 					// South cell of edge
-					if (y < GRID_HEIGHT_CELLS) {
+					if (y < this.cell_count_y) {
 						node.west.cell2 = this.cells[x-1][y];
 					}
 				}
@@ -182,7 +187,7 @@ class Puzzle {
 					}
 
 					// East cell of edge
-					if (x < GRID_WIDTH_CELLS) {
+					if (x < this.cell_count_x) {
 						node.north.cell2 = this.cells[x][y-1];
 					}
 				}

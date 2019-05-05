@@ -1,8 +1,8 @@
 class PuzzleDrawConfiguration {
-	constructor(color, edge_spacing, edge_thickness) {
+	constructor(color) {
 		this.color = color;
-		this.edge_spacing = edge_spacing;
-		this.edge_thickness = edge_thickness;
+		this.edge_spacing = 100;
+		this.edge_thickness = 24;
 	}
 }
 
@@ -31,7 +31,7 @@ function draw_node(svg, draw_config, node) {
 }
 
 function draw_edges(svg, cfg, node) {
-	// Draw north edge
+	// Draw vertical edge to the north
 	if (node.north.edge_type != EDGE_TYPE.BORDER) {
 		var x = cfg.edge_spacing * node.x;
 		var y = cfg.edge_spacing * node.y - cfg.edge_spacing + cfg.edge_thickness;
@@ -51,7 +51,7 @@ function draw_edges(svg, cfg, node) {
 		var west_corner_x = x - cfg.edge_spacing + cfg.edge_thickness;
 		var edge_length = cfg.edge_spacing;
 
-		// Draw corners
+		// Draw east corners
 		if (node.is_corner()) {
 			if (node.south.edge_type == EDGE_TYPE.BORDER) {
 				draw_quarter_circle(svg, cfg, x, y, DIRECTION.SOUTH, DIRECTION.EAST);
@@ -63,6 +63,7 @@ function draw_edges(svg, cfg, node) {
 			edge_length = cfg.edge_spacing - cfg.edge_thickness;
 		}
 
+		// Draw west corners
 		if (west_node.is_corner()) {
 			if (west_node.south.edge_type == EDGE_TYPE.BORDER) {
 				draw_quarter_circle(svg, cfg, west_corner_x, y, DIRECTION.SOUTH, DIRECTION.WEST);
@@ -72,6 +73,7 @@ function draw_edges(svg, cfg, node) {
 			}
 		}
 
+		// Draw horizontal edge to the west
 		append_svg_node(svg, 'rect', { x: west_corner_x, y: y, width: edge_length, height: cfg.edge_thickness, fill: cfg.color });
 	}
 }

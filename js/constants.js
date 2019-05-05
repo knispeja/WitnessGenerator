@@ -1,10 +1,3 @@
-// Configuration
-const GRID_WIDTH_CELLS = 3;
-const GRID_HEIGHT_CELLS = GRID_WIDTH_CELLS;
-const GRID_WIDTH_NODES = GRID_WIDTH_CELLS + 1;
-const GRID_HEIGHT_NODES = GRID_HEIGHT_CELLS + 1;
-
-// Type enums
 const DIRECTION =
 {
 	'NORTH': 0,
