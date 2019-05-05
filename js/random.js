@@ -3,7 +3,11 @@ function random_value_from_2d_array(array) {
 }
 
 function random_value_from_array(array) {
-	return array[random_integer_between(0, array.length - 1)];
+	return array[random_array_index(array)];
+}
+
+function random_array_index(array) {
+	return random_integer_between(0, array.length - 1);
 }
 
 function random_integer_between(min, max) {

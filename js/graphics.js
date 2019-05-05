@@ -43,7 +43,8 @@ function draw_edges(svg, cfg, node) {
 			height -= cfg.edge_thickness;
 		}
 
-		append_svg_node(svg, 'rect', { x: x, y: y, width: cfg.edge_thickness, height: height, fill: cfg.color });
+		var edge_color = node.north.traversed ? 'blue' : cfg.color;
+		append_svg_node(svg, 'rect', { x: x, y: y, width: cfg.edge_thickness, height: height, fill: edge_color });
 	}
 
 	// Draw west edge and corners
@@ -76,8 +77,9 @@ function draw_edges(svg, cfg, node) {
 			}
 		}
 
+		var edge_color = node.west.traversed ? 'blue' : cfg.color;
 		// Draw horizontal edge to the west
-		append_svg_node(svg, 'rect', { x: west_corner_x, y: y, width: edge_length, height: cfg.edge_thickness, fill: cfg.color });
+		append_svg_node(svg, 'rect', { x: west_corner_x, y: y, width: edge_length, height: cfg.edge_thickness, fill: edge_color });
 	}
 }
 

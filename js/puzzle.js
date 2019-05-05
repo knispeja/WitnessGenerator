@@ -77,6 +77,11 @@ class Node {
 			this.west.connects_to(node);
 	}
 
+	is_on_edge() {
+		return this.north.is_at_border() || this.south.is_at_border() ||
+			this.east.is_at_border() || this.west.is_at_border();
+	}
+
 	is_corner() {
 		return (this.north.is_at_border() || this.south.is_at_border())
 			&& (this.east.is_at_border() || this.west.is_at_border());
@@ -196,12 +201,60 @@ class Puzzle {
 		}
 	}
 
-	init_random_puzzle() {
+	init_random_puzzle(target_path_length) {
 		this.start_node = random_value_from_2d_array(this.nodes);
 		this.start_node.node_type = NODE_TYPE.START;
-		// TODO Generate "whimsical path"
-		// TODO Set end node
+		this.generate_whimsical_path(target_path_length);
 		// TODO Generate pellets
 		// TODO Generate squares
+	}
+
+	generate_whimsical_path(target_path_length) {
+		var result = this.generate_path_from_node_recursive(target_path_length, 0, this.start_node);
+		if (!result) {
+			throw "Failed to generate path, something went wrong";
+		}
+	}
+
+	generate_path_from_node_recursive(target_path_length, current_path_length, current_node) {
+		if (current_node.traversed) {
+			return false;
+		}
+		
+		current_node.traversed = true;
+
+		if (current_path_length >= target_path_length && current_node.is_on_edge()) {
+			current_node.node_type = NODE_TYPE.END;
+			return true;
+		}
+		
+		var edges = current_node.get_adjacent_edges();
+		while (true) {
+			if (edges.length <= 0) {
+				current_node.traversed = false;
+				return false;
+			}
+			var edge_index = random_array_index(edges);
+			var current_edge = edges.splice(edge_index, 1)[0];
+
+			if (this.generate_path_from_edge_recursive(target_path_length, current_path_length, current_node, current_edge)) {
+				break;
+			}
+		}
+
+		return true;
+	}
+
+	generate_path_from_edge_recursive(target_path_length, current_path_length, current_node, current_edge) {
+		if (current_edge.edge_type == EDGE_TYPE.BORDER || current_edge.traversed) {
+			return false;
+		}
+
+		current_edge.traversed = true;
+		var new_node = current_edge.get_other_connecting_node(current_node);
+		if (!this.generate_path_from_node_recursive(target_path_length, current_path_length + 1, new_node)) {
+			current_edge.traversed = false;
+		}
+		return current_edge.traversed;
 	}
 }
