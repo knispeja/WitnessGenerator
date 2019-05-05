@@ -211,8 +211,8 @@ class Puzzle {
 
 		this.for_each_step_in_path(undefined, this.generate_pellet);
 		this.for_each_edge(this.generate_obstacle);
-		// TODO Generate squares
-		// TODO Generate more end nodes
+		// TODO: Generate squares
+		// TODO: Generate more end nodes
 
 		//this.for_each_step_in_path(this.untraverse_path, this.untraverse_path);
 		//this.path = [];

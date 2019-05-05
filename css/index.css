@@ -1,5 +1,22 @@
-svg {
+html, body {
+    /* ensure that all of the viewport is used */
     width: 100%;
     height: 100%;
+    
+    /* ensure that no scrollbars appear */
+    margin: 0;
+    padding: 0;
+    
+    /* center SVG horizontally and vertically */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+  
+svg {
+    width: 80%;
+    height: 80%;
     overflow: visible;
+    display: block;
+    margin: 0 auto;
 }
