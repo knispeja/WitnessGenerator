@@ -21,8 +21,6 @@ class Edge {
 		this.node2 = node2;
 		this.cell1 = null;
 		this.cell2 = null;
-		this.traversed = false;
-		this.next_node_in_path = null;
 	}
 
 	is_traversible() {
@@ -52,16 +50,6 @@ class Edge {
 	connects_to(node) {
 		return node == this.node1 || node == this.node2;
 	}
-
-	reset_traversal() {
-		this.traversed = false;
-		this.next_node_in_path = null;
-	}
-
-	set_traversed_from(node) {
-		this.traversed = true;
-		node.next_edge_in_path = this;
-	}
 }
 
 class Node {
@@ -80,8 +68,6 @@ class Node {
 		this.west = border_edge_horz;
 
 		this.node_type = NODE_TYPE.NORMAL;
-		this.traversed = false;
-		this.next_edge_in_path = null;
 	}
 
 	is_neighbors_with(node) {
@@ -152,19 +138,6 @@ class Node {
 			this.west = new_edge;
 		}
 	}
-
-	reset_traversal() {
-		this.traversed = false;
-		this.next_edge_in_path = null;
-	}
-
-	set_traversed_from(edge) {
-		this.traversed = true;
-
-		if (edge != null) {
-			edge.next_node_in_path = this;
-		}
-	}
 }
 
 class Puzzle {
@@ -179,6 +152,7 @@ class Puzzle {
 		this.end_node = null;
 		this.cells = [];
 		this.nodes = [];
+		this.path = [];
 
 		// Init cells
 		for (var x=0; x<this.cell_count_x; x++)
@@ -232,9 +206,14 @@ class Puzzle {
 		this.start_node = random_value_from_2d_array(this.nodes);
 		this.start_node.node_type = NODE_TYPE.START;
 		this.generate_whimsical_path(target_path_length);
-		// TODO Generate pellets
+		this.for_each_step_in_path(undefined, this.generate_pellet);
 		// TODO Generate obstacles
 		// TODO Generate squares
+	}
+
+	set_traversed(traversible) {
+		traversible.traversed = true;
+		this.path.push(traversible);
 	}
 
 	generate_whimsical_path(target_path_length) {
@@ -249,7 +228,7 @@ class Puzzle {
 			return false;
 		}
 
-		current_node.set_traversed_from(current_edge);
+		this.set_traversed(current_node);
 
 		if (current_path_length >= target_path_length && current_node.is_on_edge()) {
 			current_node.node_type = NODE_TYPE.END;
@@ -259,13 +238,13 @@ class Puzzle {
 		var edges = current_node.get_adjacent_edges();
 		while (true) {
 			if (edges.length <= 0) {
-				current_node.traversed = false;
+				this.path.pop().traversed = false;
 				return false;
 			}
 			var edge_index = random_array_index(edges);
-			var current_edge = edges.splice(edge_index, 1)[0];
+			var edge = edges.splice(edge_index, 1)[0];
 
-			if (this.generate_path_from_edge_recursive(target_path_length, current_path_length, current_node, current_edge)) {
+			if (this.generate_path_from_edge_recursive(target_path_length, current_path_length, current_node, edge)) {
 				break;
 			}
 		}
@@ -278,29 +257,34 @@ class Puzzle {
 			return false;
 		}
 
-		current_edge.set_traversed_from(current_node);
+		this.set_traversed(current_edge);
 		var new_node = current_edge.get_other_connecting_node(current_node);
 		if (!this.generate_path_from_node_recursive(target_path_length, current_path_length + 1, new_node)) {
-			current_edge.reset_traversal();
+			this.path.pop().traversed = false;
 		}
 		return current_edge.traversed;
 	}
 
 	for_each_step_in_path(node_fxn = null, edge_fxn = null) {
-		if (this.start_node == null) {
+		if (this.path.length <= 0) {
 			throw "Path is not yet generated";
 		}
 
-		var current_node = this.start_node;
-		do {
-			if (node_fxn != null) {
-				node_fxn(current_node);
+		var is_edge = false;
+		this.path.forEach(function(traversible) {
+			if (node_fxn != null && !is_edge) {
+				node_fxn(traversible);
 			}
-			var edge = current_node.next_edge_in_path;
-			if (edge_fxn != null) {
-				edge_fxn(edge);
+			if (edge_fxn != null && is_edge) {
+				edge_fxn(traversible);
 			}
-			current_node = edge.next_node_in_path;
-		} while(current_node.node_type != NODE_TYPE.END)
+			is_edge = !is_edge;
+		});
+	}
+
+	generate_pellet(edge) {
+		if (Math.random() < 0.08) {
+			edge.edge_type = EDGE_TYPE.PELLET;
+		}
 	}
 }
