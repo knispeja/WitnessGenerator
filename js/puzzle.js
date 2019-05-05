@@ -136,7 +136,8 @@ class Node {
 }
 
 class Puzzle {
-	constructor() {
+	constructor(draw_config) {
+		this.draw_config = draw_config;
 		this.start_node = null;
 		this.end_node = null;
 		this.cells = [];
