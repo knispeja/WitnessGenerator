@@ -207,8 +207,12 @@ class Puzzle {
 		this.start_node.node_type = NODE_TYPE.START;
 		this.generate_whimsical_path(target_path_length);
 		this.for_each_step_in_path(undefined, this.generate_pellet);
-		// TODO Generate obstacles
+		
 		// TODO Generate squares
+		// TODO Generate more end nodes
+		
+		this.for_each_traversible_in_path(this.untraverse_path);
+		this.path = [];
 	}
 
 	set_traversed(traversible) {
@@ -265,6 +269,10 @@ class Puzzle {
 		return current_edge.traversed;
 	}
 
+	for_each_traversible_in_path(fxn) {
+		this.for_each_step_in_path(fxn, fxn);
+	}
+
 	for_each_step_in_path(node_fxn = null, edge_fxn = null) {
 		if (this.path.length <= 0) {
 			throw "Path is not yet generated";
@@ -286,5 +294,9 @@ class Puzzle {
 		if (Math.random() < 0.08) {
 			edge.edge_type = EDGE_TYPE.PELLET;
 		}
+	}
+
+	untraverse_path(traversible) {
+		traversible.traversed = false;
 	}
 }
