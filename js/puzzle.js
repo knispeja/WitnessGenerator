@@ -21,6 +21,8 @@ class Edge {
 		this.node2 = node2;
 		this.cell1 = null;
 		this.cell2 = null;
+		this.traversed = false;
+		this.next_node_in_path = null;
 	}
 
 	is_traversible() {
@@ -50,6 +52,16 @@ class Edge {
 	connects_to(node) {
 		return node == this.node1 || node == this.node2;
 	}
+
+	reset_traversal() {
+		this.traversed = false;
+		this.next_node_in_path = null;
+	}
+
+	set_traversed_from(node) {
+		this.traversed = true;
+		node.next_edge_in_path = this;
+	}
 }
 
 class Node {
@@ -68,6 +80,8 @@ class Node {
 		this.west = border_edge_horz;
 
 		this.node_type = NODE_TYPE.NORMAL;
+		this.traversed = false;
+		this.next_edge_in_path = null;
 	}
 
 	is_neighbors_with(node) {
@@ -138,6 +152,19 @@ class Node {
 			this.west = new_edge;
 		}
 	}
+
+	reset_traversal() {
+		this.traversed = false;
+		this.next_edge_in_path = null;
+	}
+
+	set_traversed_from(edge) {
+		this.traversed = true;
+
+		if (edge != null) {
+			edge.next_node_in_path = this;
+		}
+	}
 }
 
 class Puzzle {
@@ -206,22 +233,23 @@ class Puzzle {
 		this.start_node.node_type = NODE_TYPE.START;
 		this.generate_whimsical_path(target_path_length);
 		// TODO Generate pellets
+		// TODO Generate obstacles
 		// TODO Generate squares
 	}
 
 	generate_whimsical_path(target_path_length) {
-		var result = this.generate_path_from_node_recursive(target_path_length, 0, this.start_node);
+		var result = this.generate_path_from_node_recursive(target_path_length, 0, this.start_node, null);
 		if (!result) {
 			throw "Failed to generate path, something went wrong";
 		}
 	}
 
-	generate_path_from_node_recursive(target_path_length, current_path_length, current_node) {
+	generate_path_from_node_recursive(target_path_length, current_path_length, current_node, current_edge) {
 		if (current_node.traversed) {
 			return false;
 		}
-		
-		current_node.traversed = true;
+
+		current_node.set_traversed_from(current_edge);
 
 		if (current_path_length >= target_path_length && current_node.is_on_edge()) {
 			current_node.node_type = NODE_TYPE.END;
@@ -250,11 +278,29 @@ class Puzzle {
 			return false;
 		}
 
-		current_edge.traversed = true;
+		current_edge.set_traversed_from(current_node);
 		var new_node = current_edge.get_other_connecting_node(current_node);
 		if (!this.generate_path_from_node_recursive(target_path_length, current_path_length + 1, new_node)) {
-			current_edge.traversed = false;
+			current_edge.reset_traversal();
 		}
 		return current_edge.traversed;
+	}
+
+	for_each_step_in_path(node_fxn = null, edge_fxn = null) {
+		if (this.start_node == null) {
+			throw "Path is not yet generated";
+		}
+
+		var current_node = this.start_node;
+		do {
+			if (node_fxn != null) {
+				node_fxn(current_node);
+			}
+			var edge = current_node.next_edge_in_path;
+			if (edge_fxn != null) {
+				edge_fxn(edge);
+			}
+			current_node = edge.next_node_in_path;
+		} while(current_node.node_type != NODE_TYPE.END)
 	}
 }
