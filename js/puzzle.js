@@ -21,6 +21,7 @@ class Edge {
 		this.node2 = node2;
 		this.cell1 = null;
 		this.cell2 = null;
+		this.traversed = false;
 	}
 
 	is_traversible() {
@@ -68,6 +69,7 @@ class Node {
 		this.west = border_edge_horz;
 
 		this.node_type = NODE_TYPE.NORMAL;
+		this.traversed = false;
 	}
 
 	is_neighbors_with(node) {
@@ -206,13 +208,14 @@ class Puzzle {
 		this.start_node = random_value_from_2d_array(this.nodes);
 		this.start_node.node_type = NODE_TYPE.START;
 		this.generate_whimsical_path(target_path_length);
+
 		this.for_each_step_in_path(undefined, this.generate_pellet);
-		
+		this.for_each_edge(this.generate_obstacle);
 		// TODO Generate squares
 		// TODO Generate more end nodes
-		
-		this.for_each_traversible_in_path(this.untraverse_path);
-		this.path = [];
+
+		//this.for_each_step_in_path(this.untraverse_path, this.untraverse_path);
+		//this.path = [];
 	}
 
 	set_traversed(traversible) {
@@ -269,10 +272,6 @@ class Puzzle {
 		return current_edge.traversed;
 	}
 
-	for_each_traversible_in_path(fxn) {
-		this.for_each_step_in_path(fxn, fxn);
-	}
-
 	for_each_step_in_path(node_fxn = null, edge_fxn = null) {
 		if (this.path.length <= 0) {
 			throw "Path is not yet generated";
@@ -290,9 +289,35 @@ class Puzzle {
 		});
 	}
 
+	for_each_edge(edge_fxn) {
+		this.for_each_node(function(node) {
+			edge_fxn(node.north);
+			edge_fxn(node.west);
+		});
+	}
+
+	for_each_node(node_fxn) {
+		for (var x=0; x<this.nodes.length; x++) {
+			for (var y=0; y<this.nodes[x].length; y++) {
+				var node = this.nodes[x][y];
+				node_fxn(node);
+			}
+		}
+	}
+
 	generate_pellet(edge) {
 		if (Math.random() < 0.08) {
 			edge.edge_type = EDGE_TYPE.PELLET;
+		}
+	}
+
+	generate_obstacle(edge) {
+		if (edge.edge_type != EDGE_TYPE.NORMAL || edge.traversed) {
+			return;
+		}
+		if (Math.random() < 0.04) {
+			edge.edge_type = EDGE_TYPE.OBSTACLE;
+			// TODO: Check for islands and revert
 		}
 	}
 

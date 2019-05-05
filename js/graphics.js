@@ -1,8 +1,10 @@
 class PuzzleDrawConfiguration {
 	constructor(color) {
 		this.color = color;
+		this.background_color = 'white';
 		this.edge_spacing = 100;
 		this.edge_thickness = 24;
+		this.obstacle_gap_size = this.edge_spacing / 5;
 		this.start_node_radius = this.edge_thickness * 1.2;
 	}
 }
@@ -46,6 +48,9 @@ function draw_edges(svg, cfg, node) {
 		var edge_color = node.north.traversed ? 'blue' : cfg.color;
 		edge_color = node.north.edge_type == EDGE_TYPE.PELLET ? 'red' : edge_color;
 		append_svg_node(svg, 'rect', { x: x, y: y, width: cfg.edge_thickness, height: height, fill: edge_color });
+		if (node.north.edge_type == EDGE_TYPE.OBSTACLE) {
+			append_svg_node(svg, 'rect', { x: x, y: y + cfg.edge_spacing/2 - cfg.obstacle_gap_size/2 - cfg.edge_thickness/2, width: cfg.edge_thickness, height: cfg.obstacle_gap_size, fill: cfg.background_color });
+		}
 	}
 
 	// Draw west edge and corners
@@ -82,6 +87,10 @@ function draw_edges(svg, cfg, node) {
 		edge_color = node.west.edge_type == EDGE_TYPE.PELLET ? 'red' : edge_color;
 		// Draw horizontal edge to the west
 		append_svg_node(svg, 'rect', { x: west_corner_x, y: y, width: edge_length, height: cfg.edge_thickness, fill: edge_color });
+		
+		if (node.west.edge_type == EDGE_TYPE.OBSTACLE) {
+			append_svg_node(svg, 'rect', { x: west_corner_x + cfg.edge_spacing/2 - cfg.obstacle_gap_size/2 - cfg.edge_thickness/2, y: y, width: cfg.obstacle_gap_size, height: cfg.edge_thickness, fill: cfg.background_color });
+		}
 	}
 }
 
