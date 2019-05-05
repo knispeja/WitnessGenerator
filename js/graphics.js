@@ -3,6 +3,7 @@ class PuzzleDrawConfiguration {
 		this.color = color;
 		this.edge_spacing = 100;
 		this.edge_thickness = 24;
+		this.start_node_radius = this.edge_thickness * 1.2;
 	}
 }
 
@@ -24,6 +25,8 @@ function draw_puzzle(puzzle) {
 			draw_node(svg, puzzle.draw_config, puzzle.nodes[x][y]);
 		}
 	}
+
+	draw_start_node(svg, puzzle.draw_config, puzzle.start_node);
 }
 
 function draw_node(svg, draw_config, node) {
@@ -76,6 +79,13 @@ function draw_edges(svg, cfg, node) {
 		// Draw horizontal edge to the west
 		append_svg_node(svg, 'rect', { x: west_corner_x, y: y, width: edge_length, height: cfg.edge_thickness, fill: cfg.color });
 	}
+}
+
+function draw_start_node(svg, cfg, node) {
+	var half_edge_thickness = cfg.edge_thickness / 2;
+	var x = cfg.edge_spacing * node.x + half_edge_thickness;
+	var y = cfg.edge_spacing * node.y + half_edge_thickness;
+	append_svg_node(svg, 'circle', {cx: x, cy: y, r: cfg.start_node_radius, fill: cfg.color})
 }
 
 function draw_quarter_circle(svg, cfg, corner_join_x, corner_join_y, vertical_direction, horizontal_direction) {
