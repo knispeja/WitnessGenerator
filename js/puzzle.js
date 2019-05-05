@@ -36,6 +36,17 @@ class Edge {
 			(!this.is_at_border() && this.cell1.has_color_compatible_with(this.cell2));
 	}
 
+	get_other_connecting_node(node) {
+		if (!this.connects_to(node)) {
+			throw "This edge does not connect to the given node";
+		}
+
+		if (this.node1 != node) {
+			return this.node1;
+		}
+		return this.node2;
+	}
+
 	connects_to(node) {
 		return node == this.node1 || node == this.node2;
 	}
@@ -66,12 +77,40 @@ class Node {
 			this.west.connects_to(node);
 	}
 
+	is_corner() {
+		return (this.north.is_at_border() || this.south.is_at_border())
+			&& (this.east.is_at_border() || this.west.is_at_border());
+	}
+
 	get_adjacent_edges() {
 		return [this.north, this.east, this.south, this.west];
 	}
 
 	get_adjacent_required_edges() {
 		return this.get_adjacent_edges().filter(edge => edge.is_required());
+	}
+
+	get_edge(direction) {
+		switch (direction) {
+			case DIRECTION.NORTH:
+				return this.north;
+			case DIRECTION.EAST:
+				return this.east;
+			case DIRECTION.SOUTH:
+				return this.south;
+			case DIRECTION.WEST:
+				return this.west;
+			default:
+				throw "Invalid direction passed to get_edge()";
+		}
+	}
+
+	get_connected_node(direction) {
+		var edge = this.get_edge(direction);
+		if (edge.edge_type == EDGE_TYPE.BORDER) {
+			return null;
+		}
+		return edge.get_other_connecting_node(this);
 	}
 
 	add_connection(node, direction) {
