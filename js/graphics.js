@@ -6,6 +6,8 @@ class PuzzleDrawConfiguration {
 		this.edge_thickness = 24;
 		this.obstacle_gap_size = this.edge_spacing / 5;
 		this.start_node_radius = this.edge_thickness * 1.2;
+		this.pellet_color = 'black';
+		this.pellet_side_length = this.edge_thickness/2.08;
 	}
 }
 
@@ -46,10 +48,11 @@ function draw_edges(svg, cfg, node) {
 		}
 
 		var edge_color = node.north.traversed ? 'blue' : cfg.color;
-		edge_color = node.north.edge_type == EDGE_TYPE.PELLET ? 'red' : edge_color;
 		append_svg_node(svg, 'rect', { x: x, y: y, width: cfg.edge_thickness, height: height, fill: edge_color });
 		if (node.north.edge_type == EDGE_TYPE.OBSTACLE) {
 			append_svg_node(svg, 'rect', { x: x, y: y + cfg.edge_spacing/2 - cfg.obstacle_gap_size/2 - cfg.edge_thickness/2, width: cfg.edge_thickness, height: cfg.obstacle_gap_size, fill: cfg.background_color });
+		} else if (node.north.edge_type == EDGE_TYPE.PELLET) {
+			draw_hexagon(svg, x + cfg.edge_thickness/2, y + cfg.edge_spacing/2 - cfg.edge_thickness/2, cfg.pellet_side_length, cfg.pellet_color);
 		}
 	}
 
@@ -84,12 +87,14 @@ function draw_edges(svg, cfg, node) {
 		}
 
 		var edge_color = node.west.traversed ? 'blue' : cfg.color;
-		edge_color = node.west.edge_type == EDGE_TYPE.PELLET ? 'red' : edge_color;
+		
 		// Draw horizontal edge to the west
 		append_svg_node(svg, 'rect', { x: west_corner_x, y: y, width: edge_length, height: cfg.edge_thickness, fill: edge_color });
 		
 		if (node.west.edge_type == EDGE_TYPE.OBSTACLE) {
 			append_svg_node(svg, 'rect', { x: west_corner_x + cfg.edge_spacing/2 - cfg.obstacle_gap_size/2 - cfg.edge_thickness/2, y: y, width: cfg.obstacle_gap_size, height: cfg.edge_thickness, fill: cfg.background_color });
+		} else if (node.west.edge_type == EDGE_TYPE.PELLET) {
+			draw_hexagon(svg, west_corner_x + cfg.edge_spacing/2 - cfg.edge_thickness/2, y + cfg.edge_thickness/2, cfg.pellet_side_length, cfg.pellet_color);
 		}
 	}
 }
@@ -119,4 +124,27 @@ function draw_quarter_circle(svg, cfg, corner_join_x, corner_join_y, vertical_di
 	var fill_corner = `l 0 ${post_move} z`;
 
 	append_svg_node(svg, 'path', { d: `${move_to_corner} ${arc} ${fill_corner}`, fill: cfg.color});
+}
+
+// x and y are the center of the hexagon
+function draw_hexagon(svg, x, y, side_length, fill) {
+	var half_side_length = side_length/2;
+	var sine_side_length = half_side_length * Math.sqrt(3);
+	
+	// Points are alphabetical, counterclockwise around the hexagon starting with point A, the rightmost point
+	var ax = x + side_length;
+	var ay = y;
+	var bx = x + half_side_length;
+	var by = y + sine_side_length;
+	var cx = x - half_side_length;
+	var cy = y + sine_side_length;
+	var dx = x - side_length
+	var dy = y;
+	var ex = x - half_side_length;
+	var ey = y - sine_side_length;
+	var fx = x + half_side_length;
+	var fy = y - sine_side_length;
+	
+	var hex_points = `${ax},${ay} ${bx},${by}, ${cx},${cy} ${dx},${dy} ${ex},${ey} ${fx},${fy}`;
+	append_svg_node(svg, 'polygon', { class: 'hex', points: hex_points, fill: fill });
 }
