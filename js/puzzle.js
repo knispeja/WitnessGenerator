@@ -177,7 +177,7 @@ class Puzzle {
 	}
 
 	generate_end_node(node) {
-		if (node.node_type == NODE_TYPE.NORMAL) {
+		if (node.node_type == NODE_TYPE.NORMAL && node.is_on_edge() && Math.random() < 0.02) {
 			node.node_type = NODE_TYPE.END;
 		}
 	}

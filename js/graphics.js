@@ -82,6 +82,28 @@ function draw_edges(svg, cfg, node) {
 
 			edge_length = cfg.edge_spacing - cfg.edge_thickness;
 		}
+		else if (node.node_type == NODE_TYPE.END) {
+			// Draw end nodes
+			var direction_v = undefined;
+			var direction_h = undefined;
+			var end_x = x;
+			var end_y = y;
+			if (node.north.edge_type == EDGE_TYPE.BORDER) {
+				direction_v = DIRECTION.NORTH;
+				end_x += cfg.edge_thickness/2;
+			}
+			else if (node.east.edge_type == EDGE_TYPE.BORDER) {
+				direction_h = DIRECTION.EAST;
+				end_x += cfg.edge_thickness;
+				end_y += cfg.edge_thickness/2;
+			}
+			else {
+				direction_v = DIRECTION.SOUTH;
+				end_x += cfg.edge_thickness/2;
+				end_y += cfg.edge_thickness;
+			}
+			draw_end(svg, cfg, end_x, end_y, direction_v, direction_h);
+		}
 
 		// Draw west corners
 		if (west_node.is_corner()) {
@@ -95,10 +117,14 @@ function draw_edges(svg, cfg, node) {
 				draw_quarter_circle(svg, cfg, west_corner_x, y + cfg.edge_thickness, vertical_direction, DIRECTION.WEST);
 			}
 
-			// Draw end node
+			// Draw corner end node
 			if (west_node.node_type == NODE_TYPE.END) {
 				draw_end_corner(svg, cfg, west_corner_x - cfg.edge_thickness/2, y + cfg.edge_thickness/2, vertical_direction, DIRECTION.WEST);
 			}
+		}
+		else if (west_node.node_type == NODE_TYPE.END && west_node.west.edge_type == EDGE_TYPE.BORDER) {
+			// Draw west end node
+			draw_end(svg, cfg, west_corner_x - cfg.edge_thickness, node.y * cfg.edge_spacing + cfg.edge_thickness/2, undefined, DIRECTION.WEST);
 		}
 
 		var edge_color = node.west.traversed ? 'blue' : cfg.color;
@@ -112,6 +138,28 @@ function draw_edges(svg, cfg, node) {
 			draw_hexagon(svg, west_corner_x + cfg.edge_spacing/2 - cfg.edge_thickness/2, y + cfg.edge_thickness/2, cfg);
 		}
 	}
+}
+
+function draw_end(svg, cfg, center_x, center_y, vertical_direction, horizontal_direction) {
+	append_svg_node(svg, 'rect', { x: center_x - cfg.edge_thickness/2, y: center_y - cfg.edge_thickness/2, width: cfg.edge_thickness, height: cfg.edge_thickness, fill: cfg.color });
+	
+	var horizontal_mod = 0;
+	if (horizontal_direction == DIRECTION.EAST) {
+		horizontal_mod = 1;
+	} else if (horizontal_direction == DIRECTION.WEST) {
+		horizontal_mod = -1;
+	}
+
+	var vertical_mod = 0;
+	if (vertical_direction == DIRECTION.SOUTH) {
+		vertical_mod = 1;
+	} else if (vertical_direction == DIRECTION.NORTH) {
+		vertical_mod = -1;
+	}
+
+	var circle_x = center_x + horizontal_mod * cfg.edge_thickness/2;
+	var circle_y = center_y + vertical_mod * cfg.edge_thickness/2;
+	append_svg_node(svg, 'circle', { cx: circle_x, cy: circle_y, r: cfg.edge_thickness/2, fill: cfg.color });
 }
 
 function draw_end_corner(svg, cfg, center_x, center_y, vertical_direction, horizontal_direction) {
