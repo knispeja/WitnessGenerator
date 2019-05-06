@@ -1,10 +1,10 @@
 class PuzzleDrawConfiguration {
 	constructor(color) {
 		this.color = color;
-		this.background_color = 'white';
+		this.background_color = 'black';
 		this.edge_spacing = 100;
 		this.edge_thickness = 24;
-		this.obstacle_gap_size = this.edge_spacing / 5;
+		this.obstacle_gap_size = this.edge_spacing / 4;
 		this.start_node_radius = this.edge_thickness * 1.2;
 		this.pellet_color = 'black';
 		this.pellet_side_length = this.edge_thickness/2.08;
