@@ -66,23 +66,38 @@ function draw_edges(svg, cfg, node) {
 
 		// Draw east corners
 		if (node.is_corner()) {
+			var vertical_direction;
 			if (node.south.edge_type == EDGE_TYPE.BORDER) {
-				draw_quarter_circle(svg, cfg, x, y, DIRECTION.SOUTH, DIRECTION.EAST);
+				vertical_direction = DIRECTION.SOUTH;
+				draw_quarter_circle(svg, cfg, x, y, vertical_direction, DIRECTION.EAST);
 			}
 			else {
-				draw_quarter_circle(svg, cfg, x, y + cfg.edge_thickness, DIRECTION.NORTH, DIRECTION.EAST);
+				vertical_direction = DIRECTION.NORTH;
+				draw_quarter_circle(svg, cfg, x, y + cfg.edge_thickness, vertical_direction, DIRECTION.EAST);
 			}
 		
+			if (node.node_type == NODE_TYPE.END) {
+				draw_end_corner(svg, cfg, x + cfg.edge_thickness/2, y + cfg.edge_thickness/2, vertical_direction, DIRECTION.EAST);
+			}
+
 			edge_length = cfg.edge_spacing - cfg.edge_thickness;
 		}
 
 		// Draw west corners
 		if (west_node.is_corner()) {
+			var vertical_direction;
 			if (west_node.south.edge_type == EDGE_TYPE.BORDER) {
-				draw_quarter_circle(svg, cfg, west_corner_x, y, DIRECTION.SOUTH, DIRECTION.WEST);
+				vertical_direction = DIRECTION.SOUTH;
+				draw_quarter_circle(svg, cfg, west_corner_x, y, vertical_direction, DIRECTION.WEST);
 			}
 			else {
-				draw_quarter_circle(svg, cfg, west_corner_x, y + cfg.edge_thickness, DIRECTION.NORTH, DIRECTION.WEST);
+				vertical_direction = DIRECTION.NORTH;
+				draw_quarter_circle(svg, cfg, west_corner_x, y + cfg.edge_thickness, vertical_direction, DIRECTION.WEST);
+			}
+
+			// Draw end node
+			if (west_node.node_type == NODE_TYPE.END) {
+				draw_end_corner(svg, cfg, west_corner_x - cfg.edge_thickness/2, y + cfg.edge_thickness/2, vertical_direction, DIRECTION.WEST);
 			}
 		}
 
@@ -99,11 +114,27 @@ function draw_edges(svg, cfg, node) {
 	}
 }
 
+function draw_end_corner(svg, cfg, center_x, center_y, vertical_direction, horizontal_direction) {
+	var half_side_length = cfg.edge_thickness / 2;
+	var center_to_corner = Math.sqrt(2) * half_side_length;
+
+	var p_north = `${center_x},${center_y-center_to_corner}`;
+	var p_east = `${center_x+center_to_corner},${center_y}`;
+	var p_south = `${center_x},${center_y+center_to_corner}`;
+	var p_west = `${center_x-center_to_corner},${center_y}`;
+	var points = `${p_north} ${p_east} ${p_south} ${p_west}`;
+	append_svg_node(svg, 'polygon', { points: points, fill: cfg.color });
+
+	var circle_x = center_x + (horizontal_direction == DIRECTION.EAST ? 1 : -1) * center_to_corner/2;
+	var circle_y = center_y + (vertical_direction == DIRECTION.SOUTH ? 1 : -1) * center_to_corner/2;
+	append_svg_node(svg, 'circle', { cx: circle_x, cy: circle_y, r: cfg.edge_thickness/2, fill: cfg.color });
+}
+
 function draw_start_node(svg, cfg, node) {
 	var half_edge_thickness = cfg.edge_thickness / 2;
 	var x = cfg.edge_spacing * node.x + half_edge_thickness;
 	var y = cfg.edge_spacing * node.y + half_edge_thickness;
-	append_svg_node(svg, 'circle', { cx: x, cy: y, r: cfg.start_node_radius, fill: cfg.color })
+	append_svg_node(svg, 'circle', { cx: x, cy: y, r: cfg.start_node_radius, fill: cfg.color });
 }
 
 function draw_quarter_circle(svg, cfg, corner_join_x, corner_join_y, vertical_direction, horizontal_direction) {

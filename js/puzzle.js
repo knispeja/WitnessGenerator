@@ -67,7 +67,7 @@ class Puzzle {
 		this.for_each_step_in_path(undefined, this.generate_pellet);
 		this.for_each_edge(this.generate_obstacle);
 		// TODO: Generate squares
-		// TODO: Generate more end nodes
+		this.for_each_node(this.generate_end_node);
 
 		this.for_each_step_in_path(this.untraverse_path, this.untraverse_path);
 		this.path = [];
@@ -173,6 +173,12 @@ class Puzzle {
 		if (Math.random() < 0.04) {
 			edge.edge_type = EDGE_TYPE.OBSTACLE;
 			// TODO: Check for islands and revert
+		}
+	}
+
+	generate_end_node(node) {
+		if (node.node_type == NODE_TYPE.NORMAL) {
+			node.node_type = NODE_TYPE.END;
 		}
 	}
 
