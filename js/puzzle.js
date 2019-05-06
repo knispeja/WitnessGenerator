@@ -151,7 +151,6 @@ class Puzzle {
 
 		this.draw_config = draw_config;
 		this.start_node = null;
-		this.end_node = null;
 		this.cells = [];
 		this.nodes = [];
 		this.path = [];
@@ -214,8 +213,8 @@ class Puzzle {
 		// TODO: Generate squares
 		// TODO: Generate more end nodes
 
-		//this.for_each_step_in_path(this.untraverse_path, this.untraverse_path);
-		//this.path = [];
+		this.for_each_step_in_path(this.untraverse_path, this.untraverse_path);
+		this.path = [];
 	}
 
 	set_traversed(traversible) {
