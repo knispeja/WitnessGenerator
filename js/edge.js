@@ -10,7 +10,7 @@ class Edge {
 	}
 
 	is_traversible() {
-		return (this.edge_type != EDGE_TYPE.OBSTACLE && this.edge_type != EDGE_TYPE.BORDER);
+		return (this.edge_type != EDGE_TYPE.OBSTACLE && this.edge_type != EDGE_TYPE.BORDER && !this.traversed);
 	}
 
 	is_at_border() {
@@ -24,13 +24,23 @@ class Edge {
 
 	get_other_connecting_node(node) {
 		if (!this.connects_to(node)) {
-			throw "This edge does not connect to the given node";
+			throw "This edge does not connect to the provided node";
 		}
 
 		if (this.node1 != node) {
 			return this.node1;
 		}
 		return this.node2;
+	}
+
+	get_other_connecting_cell(cell) {
+		if (cell == this.cell1) {
+			return this.cell2;
+		}
+		if (cell == this.cell2) {
+			return this.cell1;
+		}
+		throw "This edge does not connect to the provided cell"
 	}
 
 	connects_to(node) {

@@ -1,14 +1,25 @@
 class Cell {
-	constructor() {
+	constructor(x, y) {
 		this.cell_type = CELL_TYPE.NORMAL;
-		this.cell_color = null;
+		this.color = null;
+		this.x = x;
+		this.y = y;
+		this.region = null;
+		this.north_edge = null;
+		this.east_edge = null;
+		this.south_edge = null;
+		this.west_edge = null;
 	}
 
-	has_color_compatible_with(other_cell) {
-		if (this.cell_color == null || other_cell.cell_color == null) {
+	has_color_compatible_with_cell(other_cell) {
+		return has_color_compatible_with(other_cell.color);
+	}
+
+	has_color_compatible_with(cell_color) {
+		if (this.color == null || cell_color == null) {
 			return true;
 		}
 
-		return this.cell_color == other_cell.cell_color;
+		return this.color == cell_color;
 	}
 }
