@@ -11,6 +11,11 @@ class Cell {
 		this.west_edge = null;
 	}
 
+	get_non_null_adjacent_edges() {
+		var edges = [this.north_edge, this.east_edge, this.south_edge, this.west_edge];
+		return edges.filter(function(edge) {return edge != null});
+	}
+
 	has_color_compatible_with_cell(other_cell) {
 		return has_color_compatible_with(other_cell.color);
 	}

@@ -15,8 +15,4 @@ class CellRegion {
 			this.is_valid = false;
 		}
 	}
-
-	absorb_region(cell_region) {
-		cell_region.cells.forEach(this.add_cell, this);
-	}
 }

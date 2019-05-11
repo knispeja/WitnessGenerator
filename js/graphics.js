@@ -8,6 +8,7 @@ class PuzzleDrawConfiguration {
 		this.start_node_radius = this.edge_thickness * 1.2;
 		this.pellet_color = 'black';
 		this.pellet_side_length = this.edge_thickness/2.08;
+		this.colored_square_side_length = 30;
 	}
 }
 
@@ -30,7 +31,25 @@ function draw_puzzle(puzzle) {
 		}
 	}
 
+	for (var x=0; x<puzzle.cells.length; x++) {
+		for (var y=0; y<puzzle.cells[x].length; y++)
+		{
+			draw_cell(svg, puzzle.draw_config, puzzle.cells[x][y]);
+		}
+	}
+
 	draw_start_node(svg, puzzle.draw_config, puzzle.start_node);
+}
+
+function draw_cell(svg, cfg, cell) {
+	if (cell.cell_type != CELL_TYPE.SQUARE) {
+		return;
+	}
+	var side_length = cfg.colored_square_side_length;
+	var coord_mod = cfg.edge_spacing/2 + cfg.edge_thickness/2 - side_length/2;
+	var x = cell.x * cfg.edge_spacing + coord_mod;
+	var y = cell.y * cfg.edge_spacing + coord_mod;
+	append_svg_node(svg, 'rect', { x: x, y: y, rx:4, ry:4, width: side_length, height: side_length, fill: cell.color });
 }
 
 function draw_node(svg, draw_config, node) {

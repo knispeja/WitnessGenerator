@@ -69,7 +69,7 @@ class Puzzle {
 		this.start_node = random_value_from_2d_array(this.nodes);
 		this.start_node.node_type = NODE_TYPE.START;
 		this.generate_whimsical_path(target_path_length);
-		this.regions = this.compute_regions();
+		this.compute_regions();
 
 		this.for_each_step_in_path(undefined, this.generate_pellet);
 		this.for_each_edge(this.generate_obstacle);
@@ -137,53 +137,38 @@ class Puzzle {
 	}
 
 	compute_regions() {
-		var current_region = new CellRegion();
-		var regions = [current_region];
-		return this.compute_regions_recursive(this.cells[0][0], current_region, regions, false);
+		this.regions = [];
+		for (var x=0; x<this.cells.length; x++) {
+			for (var y=0; y<this.cells[x].length; y++) {
+				var cell = this.cells[x][y];
+				if (cell.region == null) {
+					var region = new CellRegion();
+					this.regions.push(region);
+					this.compute_region_recursive(cell, region);
+				}
+			}
+		}
 	}
 
-	compute_regions_recursive(current_cell, current_region, regions, crossed_border) {
-		if (current_cell.region != null) {
-			if (current_cell.region != current_region && !crossed_border) {
-				current_region.absorb_region(current_cell.region);
-				regions = regions.filter(function(region){
-					return region != current_cell.region;
-				});
+	compute_region_recursive(current_cell, current_region) {
+		current_region.add_cell(current_cell);
+		current_cell.get_non_null_adjacent_edges().forEach(function(edge) {
+			var other_cell = edge.get_other_connecting_cell(current_cell);
+			if (other_cell == null || other_cell.region != null || edge.traversed) {
+				return;
 			}
-		}
-		else {
-			current_region.add_cell(current_cell);
-
-			var south_cell = current_cell.south_edge.get_other_connecting_cell(current_cell);
-			if (south_cell != null) {
-				if (!current_cell.south_edge.is_traversible()) {
-					var south_region = new CellRegion();
-					regions.push(south_region);
-					regions = this.compute_regions_recursive(south_cell, south_region, regions, true);
-				}
-				else {
-					regions = this.compute_regions_recursive(south_cell, current_region, regions, false);
-				}
-			}
-
-			var east_cell = current_cell.east_edge.get_other_connecting_cell(current_cell);
-			if (east_cell != null) {
-				if (!current_cell.east_edge.is_traversible()) {
-					var east_region = new CellRegion();
-					regions.push(east_region);
-					regions = this.compute_regions_recursive(east_cell, east_region, regions, true);
-				}
-				else {
-					regions = this.compute_regions_recursive(east_cell, current_region, regions, false);
-				}
-			}
-		}
-		return regions;
+			this.compute_region_recursive(other_cell, current_region);
+		}, this);
 	}
 
 	generate_colored_squares() {
-		this.regions[0].cells.forEach(function (cell) {
-			cell.color = CELL_COLOR[0];
+		var cell_color = 1;
+		this.regions.forEach(function (region) {
+			region.cells.forEach(function (cell) {
+				cell.color = CELL_COLOR[cell_color];
+				cell.cell_type = CELL_TYPE.SQUARE;
+			});
+			cell_color++;
 		});
 	}
 
@@ -209,6 +194,7 @@ class Puzzle {
 			edge_fxn(node.north);
 			edge_fxn(node.west);
 		});
+		// TODO: Currently missing bottom and right edges
 	}
 
 	for_each_node(node_fxn) {
