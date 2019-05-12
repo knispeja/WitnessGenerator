@@ -34,6 +34,12 @@ class Node {
 			&& (this.east.is_at_border() || this.west.is_at_border());
 	}
 
+	get_adjacent_pathable_edges() {
+		return this.get_adjacent_edges().filter(
+			edge => edge.edge_type != EDGE_TYPE.BORDER && edge.edge_type != EDGE_TYPE.OBSTACLE
+		);
+	}
+
 	get_adjacent_edges() {
 		return [this.north, this.east, this.south, this.west];
 	}

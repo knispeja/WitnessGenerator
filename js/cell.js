@@ -11,6 +11,10 @@ class Cell {
 		this.west_edge = null;
 	}
 
+	manhattan_distance_to(other_cell) {
+		return Math.abs(other_cell.x - this.x) + Math.abs(other_cell.y - this.y);
+	}
+
 	get_non_null_adjacent_edges() {
 		var edges = [this.north_edge, this.east_edge, this.south_edge, this.west_edge];
 		return edges.filter(function(edge) {return edge != null});

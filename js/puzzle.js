@@ -163,13 +163,63 @@ class Puzzle {
 
 	generate_colored_squares() {
 		var cell_color = 1;
+		var regions_with_squares = 0;
 		this.regions.forEach(function (region) {
+			var squares_generated_in_region = 0;
+			var last_cell_given_square = null;
+
+			// Don't put squares in the last region if we haven't generated any
+			if (regions_with_squares == 0 && region == this.regions[this.regions.length - 1]) {
+				return;
+			}
+
 			region.cells.forEach(function (cell) {
-				cell.color = CELL_COLOR[cell_color];
-				cell.cell_type = CELL_TYPE.SQUARE;
-			});
-			cell_color++;
-		});
+				var odds_of_square = 0;
+
+				// Avoid having only squares of one color
+				var must_create_square = (regions_with_squares == 1 && squares_generated_in_region == 0);
+
+				if (!must_create_square) {
+					var existing_squares_in_region_weight = 0.24;
+					odds_of_square += existing_squares_in_region_weight/(squares_generated_in_region + 1);
+
+					var untraversible_edge_weight = 0.05;
+					odds_of_square += (
+						cell.get_non_null_adjacent_edges().filter(function(edge) { return edge.is_traversible(); }).length
+						/ (4/untraversible_edge_weight)
+					);
+
+					var traversed_edge_weight = 0.15;
+					odds_of_square += (
+						cell.get_non_null_adjacent_edges().filter(function(edge) { return edge.traversed; }).length
+						/ (4/traversed_edge_weight)
+					);
+
+					if (last_cell_given_square != null) {
+						var distance_to_last_square_weight = 0.32;
+						var maximum_manhattan = this.cell_count_x - 1 + this.cell_count_y - 1;
+						odds_of_square += (
+							cell.manhattan_distance_to(last_cell_given_square)
+							/ (maximum_manhattan)
+						) * distance_to_last_square_weight;
+					}
+				}
+
+				if (must_create_square || Math.random() < odds_of_square) {
+					if (squares_generated_in_region == 0) {
+						regions_with_squares++;
+					}
+
+					squares_generated_in_region++;
+					last_cell_given_square = cell;
+					cell.color = CELL_COLOR[cell_color];
+					cell.cell_type = CELL_TYPE.SQUARE;
+				}
+			}, this);
+			if (++cell_color >= CELL_COLOR.length) {
+				return;
+			}
+		}, this);
 	}
 
 	for_each_step_in_path(node_fxn = null, edge_fxn = null) {
@@ -207,7 +257,7 @@ class Puzzle {
 	}
 
 	generate_pellet(edge) {
-		if (Math.random() < 0.08) {
+		if (Math.random() < 0.14) {
 			edge.edge_type = EDGE_TYPE.PELLET;
 		}
 	}
@@ -216,9 +266,11 @@ class Puzzle {
 		if (edge.edge_type != EDGE_TYPE.NORMAL || edge.traversed) {
 			return;
 		}
-		if (Math.random() < 0.04) {
+		if (Math.random() < 0.45) {
 			edge.edge_type = EDGE_TYPE.OBSTACLE;
-			// TODO: Check for islands and revert
+			if (edge.node1.get_adjacent_pathable_edges().length < 2 || edge.node2.get_adjacent_pathable_edges().length < 2) {
+				edge.edge_type = EDGE_TYPE.NORMAL;
+			}
 		}
 	}
 
