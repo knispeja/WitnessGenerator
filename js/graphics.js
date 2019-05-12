@@ -1,7 +1,7 @@
 class PuzzleDrawConfiguration {
 	constructor(color) {
 		this.color = color;
-		this.background_color = 'black';
+		this.background_color = 'grey';
 		this.edge_spacing = 100;
 		this.edge_thickness = 24;
 		this.obstacle_gap_size = this.edge_spacing / 4;

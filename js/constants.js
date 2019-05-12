@@ -27,7 +27,7 @@ const CELL_TYPE =
 	'SQUARE': 1
 };
 
-const CELL_COLOR = 
+const CELL_COLORS = 
 [
 	'black',
 	'white',
@@ -39,3 +39,10 @@ const CELL_COLOR =
 	'blue',
 	'orange'
 ];
+
+const CELL_COLOR =
+{
+	'WHITE': 0,
+	'BLACK': 1,
+	'START_HUES': 2
+};

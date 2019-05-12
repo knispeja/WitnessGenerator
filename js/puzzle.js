@@ -162,7 +162,8 @@ class Puzzle {
 	}
 
 	generate_colored_squares() {
-		var cell_color = 1;
+		var black_white_mode = true;
+		var cell_color = black_white_mode ? CELL_COLOR.WHITE : CELL_COLOR.START_HUES;
 		var regions_with_squares = 0;
 		this.regions.forEach(function (region) {
 			var squares_generated_in_region = 0;
@@ -212,11 +213,14 @@ class Puzzle {
 
 					squares_generated_in_region++;
 					last_cell_given_square = cell;
-					cell.color = CELL_COLOR[cell_color];
+					cell.color = CELL_COLORS[cell_color];
 					cell.cell_type = CELL_TYPE.SQUARE;
 				}
 			}, this);
-			if (++cell_color >= CELL_COLOR.length) {
+			if (black_white_mode) {
+				cell_color = (cell_color == CELL_COLOR.WHITE) ? CELL_COLOR.BLACK : CELL_COLOR.WHITE;
+			}
+			else if (++cell_color >= CELL_COLORS.length) {
 				return;
 			}
 		}, this);
