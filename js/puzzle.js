@@ -243,8 +243,13 @@ class Puzzle {
 		this.for_each_node(function(node) {
 			edge_fxn(node.north);
 			edge_fxn(node.west);
+			if (node.south.get_other_connecting_node(node) == null) {
+				edge_fxn(node.south);
+			}
+			else if (node.west.get_other_connecting_node(node) == null) {
+				edge_fxn(node.west);
+			}
 		});
-		// TODO: Currently missing bottom and right edges
 	}
 
 	for_each_node(node_fxn) {
