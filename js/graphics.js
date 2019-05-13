@@ -201,7 +201,7 @@ function draw_start_node(svg, cfg, node) {
 	var half_edge_thickness = cfg.edge_thickness / 2;
 	var x = cfg.edge_spacing * node.x + half_edge_thickness;
 	var y = cfg.edge_spacing * node.y + half_edge_thickness;
-	append_svg_node(svg, 'circle', { cx: x, cy: y, r: cfg.start_node_radius, fill: cfg.color });
+	append_svg_node(svg, 'circle', { cx: x, cy: y, r: cfg.start_node_radius, fill: cfg.color, onclick: "on_click_start_node(this);" });
 }
 
 function draw_quarter_circle(svg, cfg, corner_join_x, corner_join_y, vertical_direction, horizontal_direction) {
