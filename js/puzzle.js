@@ -1,11 +1,10 @@
 class Puzzle {
-	constructor(draw_config, cell_count_x, cell_count_y) {
+	constructor(cell_count_x, cell_count_y) {
 		this.cell_count_x = cell_count_x;
 		this.cell_count_y = cell_count_y;
 		this.node_count_x = cell_count_x + 1;
 		this.node_count_y = cell_count_y + 1;
 
-		this.draw_config = draw_config;
 		this.start_node = null;
 		this.cells = [];
 		this.nodes = [];

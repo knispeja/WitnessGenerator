@@ -12,6 +12,11 @@ class PuzzleDrawConfiguration {
 	}
 }
 
+function init_graphics(draw_config) {
+	cfg = draw_config;
+	svg = append_svg_node(document.body, "svg");
+}
+
 function append_svg_node(parent_node, node_type, property_values) {
 	var node = document.createElementNS("http://www.w3.org/2000/svg", node_type);
 	for (var property in property_values) {
@@ -22,26 +27,24 @@ function append_svg_node(parent_node, node_type, property_values) {
 }
 
 function draw_puzzle(puzzle) {
-	var svg = append_svg_node(document.body, "svg");
-
 	for (var x=0; x<puzzle.nodes.length; x++) {
 		for (var y=0; y<puzzle.nodes[x].length; y++)
 		{
-			draw_node(svg, puzzle.draw_config, puzzle.nodes[x][y]);
+			draw_node(puzzle.nodes[x][y]);
 		}
 	}
 
 	for (var x=0; x<puzzle.cells.length; x++) {
 		for (var y=0; y<puzzle.cells[x].length; y++)
 		{
-			draw_cell(svg, puzzle.draw_config, puzzle.cells[x][y]);
+			draw_cell(puzzle.cells[x][y]);
 		}
 	}
 
-	draw_start_node(svg, puzzle.draw_config, puzzle.start_node);
+	draw_start_node(puzzle.start_node);
 }
 
-function draw_cell(svg, cfg, cell) {
+function draw_cell(cell) {
 	if (cell.cell_type != CELL_TYPE.SQUARE) {
 		return;
 	}
@@ -52,11 +55,11 @@ function draw_cell(svg, cfg, cell) {
 	append_svg_node(svg, 'rect', { x: x, y: y, rx:4, ry:4, width: side_length, height: side_length, fill: cell.color });
 }
 
-function draw_node(svg, draw_config, node) {
-	draw_edges(svg, draw_config, node);
+function draw_node(node) {
+	draw_edges(node);
 }
 
-function draw_edges(svg, cfg, node) {
+function draw_edges(node) {
 	// Draw vertical edge to the north
 	if (node.north.edge_type != EDGE_TYPE.BORDER) {
 		var x = cfg.edge_spacing * node.x;
@@ -71,7 +74,7 @@ function draw_edges(svg, cfg, node) {
 		if (node.north.edge_type == EDGE_TYPE.OBSTACLE) {
 			append_svg_node(svg, 'rect', { x: x, y: y + cfg.edge_spacing/2 - cfg.obstacle_gap_size/2 - cfg.edge_thickness/2, width: cfg.edge_thickness, height: cfg.obstacle_gap_size, fill: cfg.background_color });
 		} else if (node.north.edge_type == EDGE_TYPE.PELLET) {
-			draw_hexagon(svg, x + cfg.edge_thickness/2, y + cfg.edge_spacing/2 - cfg.edge_thickness/2, cfg);
+			draw_hexagon(x + cfg.edge_thickness/2, y + cfg.edge_spacing/2 - cfg.edge_thickness/2);
 		}
 	}
 
@@ -88,15 +91,15 @@ function draw_edges(svg, cfg, node) {
 			var vertical_direction;
 			if (node.south.edge_type == EDGE_TYPE.BORDER) {
 				vertical_direction = DIRECTION.SOUTH;
-				draw_quarter_circle(svg, cfg, x, y, vertical_direction, DIRECTION.EAST);
+				draw_quarter_circle(x, y, vertical_direction, DIRECTION.EAST);
 			}
 			else {
 				vertical_direction = DIRECTION.NORTH;
-				draw_quarter_circle(svg, cfg, x, y + cfg.edge_thickness, vertical_direction, DIRECTION.EAST);
+				draw_quarter_circle(x, y + cfg.edge_thickness, vertical_direction, DIRECTION.EAST);
 			}
 		
 			if (node.node_type == NODE_TYPE.END) {
-				draw_end_corner(svg, cfg, x + cfg.edge_thickness/2, y + cfg.edge_thickness/2, vertical_direction, DIRECTION.EAST);
+				draw_end_corner(x + cfg.edge_thickness/2, y + cfg.edge_thickness/2, vertical_direction, DIRECTION.EAST);
 			}
 
 			edge_length = cfg.edge_spacing - cfg.edge_thickness;
@@ -121,7 +124,7 @@ function draw_edges(svg, cfg, node) {
 				end_x += cfg.edge_thickness/2;
 				end_y += cfg.edge_thickness;
 			}
-			draw_end(svg, cfg, end_x, end_y, direction_v, direction_h);
+			draw_end(end_x, end_y, direction_v, direction_h);
 		}
 
 		// Draw west corners
@@ -129,21 +132,21 @@ function draw_edges(svg, cfg, node) {
 			var vertical_direction;
 			if (west_node.south.edge_type == EDGE_TYPE.BORDER) {
 				vertical_direction = DIRECTION.SOUTH;
-				draw_quarter_circle(svg, cfg, west_corner_x, y, vertical_direction, DIRECTION.WEST);
+				draw_quarter_circle(west_corner_x, y, vertical_direction, DIRECTION.WEST);
 			}
 			else {
 				vertical_direction = DIRECTION.NORTH;
-				draw_quarter_circle(svg, cfg, west_corner_x, y + cfg.edge_thickness, vertical_direction, DIRECTION.WEST);
+				draw_quarter_circle(west_corner_x, y + cfg.edge_thickness, vertical_direction, DIRECTION.WEST);
 			}
 
 			// Draw corner end node
 			if (west_node.node_type == NODE_TYPE.END) {
-				draw_end_corner(svg, cfg, west_corner_x - cfg.edge_thickness/2, y + cfg.edge_thickness/2, vertical_direction, DIRECTION.WEST);
+				draw_end_corner(west_corner_x - cfg.edge_thickness/2, y + cfg.edge_thickness/2, vertical_direction, DIRECTION.WEST);
 			}
 		}
 		else if (west_node.node_type == NODE_TYPE.END && west_node.west.edge_type == EDGE_TYPE.BORDER) {
 			// Draw west end node
-			draw_end(svg, cfg, west_corner_x - cfg.edge_thickness, node.y * cfg.edge_spacing + cfg.edge_thickness/2, undefined, DIRECTION.WEST);
+			draw_end(west_corner_x - cfg.edge_thickness, node.y * cfg.edge_spacing + cfg.edge_thickness/2, undefined, DIRECTION.WEST);
 		}
 
 		var edge_color = node.west.traversed ? 'blue' : cfg.color;
@@ -154,12 +157,12 @@ function draw_edges(svg, cfg, node) {
 		if (node.west.edge_type == EDGE_TYPE.OBSTACLE) {
 			append_svg_node(svg, 'rect', { x: west_corner_x + cfg.edge_spacing/2 - cfg.obstacle_gap_size/2 - cfg.edge_thickness/2, y: y, width: cfg.obstacle_gap_size, height: cfg.edge_thickness, fill: cfg.background_color });
 		} else if (node.west.edge_type == EDGE_TYPE.PELLET) {
-			draw_hexagon(svg, west_corner_x + cfg.edge_spacing/2 - cfg.edge_thickness/2, y + cfg.edge_thickness/2, cfg);
+			draw_hexagon(west_corner_x + cfg.edge_spacing/2 - cfg.edge_thickness/2, y + cfg.edge_thickness/2);
 		}
 	}
 }
 
-function draw_end(svg, cfg, center_x, center_y, vertical_direction, horizontal_direction) {
+function draw_end(center_x, center_y, vertical_direction, horizontal_direction) {
 	append_svg_node(svg, 'rect', { x: center_x - cfg.edge_thickness/2, y: center_y - cfg.edge_thickness/2, width: cfg.edge_thickness, height: cfg.edge_thickness, fill: cfg.color });
 	
 	var horizontal_mod = 0;
@@ -181,7 +184,7 @@ function draw_end(svg, cfg, center_x, center_y, vertical_direction, horizontal_d
 	append_svg_node(svg, 'circle', { cx: circle_x, cy: circle_y, r: cfg.edge_thickness/2, fill: cfg.color });
 }
 
-function draw_end_corner(svg, cfg, center_x, center_y, vertical_direction, horizontal_direction) {
+function draw_end_corner(center_x, center_y, vertical_direction, horizontal_direction) {
 	var half_side_length = cfg.edge_thickness / 2;
 	var center_to_corner = Math.sqrt(2) * half_side_length;
 
@@ -197,14 +200,14 @@ function draw_end_corner(svg, cfg, center_x, center_y, vertical_direction, horiz
 	append_svg_node(svg, 'circle', { cx: circle_x, cy: circle_y, r: cfg.edge_thickness/2, fill: cfg.color });
 }
 
-function draw_start_node(svg, cfg, node) {
+function draw_start_node(node) {
 	var half_edge_thickness = cfg.edge_thickness / 2;
 	var x = cfg.edge_spacing * node.x + half_edge_thickness;
 	var y = cfg.edge_spacing * node.y + half_edge_thickness;
 	append_svg_node(svg, 'circle', { cx: x, cy: y, r: cfg.start_node_radius, fill: cfg.color, onclick: "on_click_start_node(this);" });
 }
 
-function draw_quarter_circle(svg, cfg, corner_join_x, corner_join_y, vertical_direction, horizontal_direction) {
+function draw_quarter_circle(corner_join_x, corner_join_y, vertical_direction, horizontal_direction) {
 	var arc_dx = horizontal_direction == DIRECTION.WEST ? -cfg.edge_thickness : cfg.edge_thickness;
 	var arc_dy = vertical_direction == DIRECTION.NORTH ? -cfg.edge_thickness : cfg.edge_thickness;
 	var sweep_flag = horizontal_direction == DIRECTION.WEST ? 0 : 1;
@@ -224,7 +227,7 @@ function draw_quarter_circle(svg, cfg, corner_join_x, corner_join_y, vertical_di
 	append_svg_node(svg, 'path', { d: `${move_to_corner} ${arc} ${fill_corner}`, fill: cfg.color});
 }
 
-function draw_hexagon(svg, center_x, center_y, cfg) {
+function draw_hexagon(center_x, center_y) {
 	var half_side_length = cfg.pellet_side_length/2;
 	var sine_side_length = half_side_length * Math.sqrt(3);
 	
