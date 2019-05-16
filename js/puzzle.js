@@ -76,8 +76,7 @@ class Puzzle {
 		this.for_each_node(this.generate_end_node);
 
 		// Reset variables for pathing
-		this.for_each_step_in_path(this.untraverse_path, this.untraverse_path);
-		this.path = [];
+		this.reset_path();
 		this.regions = null;
 	}
 
@@ -286,6 +285,11 @@ class Puzzle {
 		if (node.node_type == NODE_TYPE.NORMAL && node.is_on_edge() && Math.random() < 0.02) {
 			node.node_type = NODE_TYPE.END;
 		}
+	}
+
+	reset_path() {
+		this.for_each_step_in_path(this.untraverse_path, this.untraverse_path);
+		this.path = [];
 	}
 
 	untraverse_path(traversible) {
