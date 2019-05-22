@@ -3,23 +3,35 @@ class PathDisplay {
 		this.currently_drawing_path = false;
 		this.start_node_overlay = null;
 		this.path_objects = [];
+		this.directions_moved = [];
+		this.path_head_is_node = true;
 		this.mouse_tracker = null;
+	}
+
+	last_direction_moved() {
+		if (this.directions_moved.length == 0) {
+			return null;
+		}
+		return this.directions_moved[this.directions_moved.length - 1];
 	}
 
 	start_drawing(start_node) {
 		document.body.addEventListener('click', path_display.stop_drawing, true);
+		window.onkeyup = path_display.handle_key;
 		this.currently_drawing_path = true;
 		this.start_node_overlay = start_node;
 		this.mouse_tracker = new MouseTracker();
 		this.expand_start_node_timer = setInterval(() => this.expand_start_node(this), 5);
+		this.path_head_is_node = true;
 		puzzle.set_traversed(puzzle.start_node);
 	}
 
 	stop_drawing() {
+		document.body.removeEventListener('click', path_display.stop_drawing, true);
+		window.removeEventListener("keypress", path_display.handle_key, true);
 		path_display.mouse_tracker.dispose();
 		path_display.mouse_tracker = null;
 		path_display.currently_drawing_path = false;
-		document.body.removeEventListener('click', path_display.stop_drawing, true);
 		svg.removeChild(path_display.start_node_overlay);
 
 		path_display.path_objects.forEach((path_object) => {
@@ -28,7 +40,29 @@ class PathDisplay {
 
 		path_display.start_node_overlay = null;
 		path_display.path_objects = [];
+		path_display.directions_moved = [];
 		puzzle.reset_path();
+	}
+
+	handle_key(e) {
+		switch (e.keyCode) {
+			case 37: return on_attempted_full_step(DIRECTION.WEST);
+			case 38: return on_attempted_full_step(DIRECTION.NORTH);
+			case 39: return on_attempted_full_step(DIRECTION.EAST);
+			case 40: return on_attempted_full_step(DIRECTION.SOUTH);
+		}
+	}
+
+	move_forward_to(traversible, direction_moved) {
+		this.directions_moved.push(direction_moved);
+		this.path_head_is_node = !this.path_head_is_node;
+		puzzle.set_traversed(traversible);
+	}
+
+	move_backwards() {
+		this.directions_moved.pop();
+		this.path_head_is_node = !this.path_head_is_node;
+		puzzle.remove_head_of_path();
 	}
 
 	expand_start_node() {
@@ -58,7 +92,9 @@ class MouseTracker {
 			var delta_y = event.pageY - path_display.mouse_tracker.previous_y;
 
 			var direction;
+			var magnitude;
 			if (delta_x > delta_y) {
+				magnitude = delta_x;
 				if (delta_x > 0) {
 					direction = DIRECTION.EAST;
 				}
@@ -67,6 +103,7 @@ class MouseTracker {
 				}
 			}
 			else {
+				magnitude = delta_y;
 				if (delta_y > 0) {
 					direction = DIRECTION.SOUTH;
 				}
@@ -87,8 +124,46 @@ class MouseTracker {
 	}
 }
 
-function on_attempted_move(direction) {
+function on_attempted_full_step(direction) {
+	if(on_attempted_move(direction)) {
+		if (!path_display.path_head_is_node) {
+			on_attempted_move(direction);
+		}
+	}
+}
 
+function on_attempted_move(direction) {
+	var path_head = puzzle.get_head_of_path();
+	var new_path_object;
+
+	if (flip_direction(direction) == path_display.last_direction_moved()) {
+		if (!path_display.path_head_is_node) {
+			path_head.graphics_object.setAttributeNS(null, 'fill', cfg.color);
+		}
+		path_display.move_backwards();
+		return true;
+	}
+
+	if (path_display.path_head_is_node) {
+		var new_edge = path_head.get_edge(direction);
+		if (!new_edge.is_traversible()) {
+			return false;
+		}
+		new_edge.graphics_object.setAttributeNS(null, 'fill', 'red');
+		new_path_object = new_edge;
+		// this.path_objects.push(traversible); // push the new graphics object
+	} else {
+		if (is_vertical(direction) != path_head.is_vertical) {
+			return false;
+		}
+		new_path_object = path_head.get_other_connecting_node(puzzle.path[puzzle.path.length - 2]);
+		if (new_path_object.traversed) {
+			return false;
+		}
+	}
+
+	path_display.move_forward_to(new_path_object, direction);
+	return true;
 }
 
 function on_click_start_node(start_node) {

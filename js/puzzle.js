@@ -287,6 +287,18 @@ class Puzzle {
 		}
 	}
 
+	get_head_of_path() {
+		if (this.path.length == 0) {
+			throw "Path is empty";
+		}
+
+		return this.path[this.path.length - 1];
+	}
+
+	remove_head_of_path() {
+		this.untraverse_path(this.path.pop());
+	}
+
 	reset_path() {
 		this.for_each_step_in_path(this.untraverse_path, this.untraverse_path);
 		this.path = [];

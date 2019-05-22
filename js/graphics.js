@@ -56,7 +56,7 @@ function draw_edges(node) {
 		}
 
 		var edge_color = node.north.traversed ? 'blue' : cfg.color;
-		append_svg_node(svg, 'rect', { x: x, y: y, width: cfg.edge_thickness, height: height, fill: edge_color });
+		node.north.graphics_object = append_svg_node(svg, 'rect', { x: x, y: y, width: cfg.edge_thickness, height: height, fill: edge_color });
 		if (node.north.edge_type == EDGE_TYPE.OBSTACLE) {
 			append_svg_node(svg, 'rect', { x: x, y: y + cfg.edge_spacing/2 - cfg.obstacle_gap_size/2 - cfg.edge_thickness/2, width: cfg.edge_thickness, height: cfg.obstacle_gap_size, fill: cfg.background_color });
 		} else if (node.north.edge_type == EDGE_TYPE.PELLET) {
@@ -138,7 +138,7 @@ function draw_edges(node) {
 		var edge_color = node.west.traversed ? 'blue' : cfg.color;
 		
 		// Draw horizontal edge to the west
-		append_svg_node(svg, 'rect', { x: west_corner_x, y: y, width: edge_length, height: cfg.edge_thickness, fill: edge_color });
+		node.west.graphics_object = append_svg_node(svg, 'rect', { x: west_corner_x, y: y, width: edge_length, height: cfg.edge_thickness, fill: edge_color });
 		
 		if (node.west.edge_type == EDGE_TYPE.OBSTACLE) {
 			append_svg_node(svg, 'rect', { x: west_corner_x + cfg.edge_spacing/2 - cfg.obstacle_gap_size/2 - cfg.edge_thickness/2, y: y, width: cfg.obstacle_gap_size, height: cfg.edge_thickness, fill: cfg.background_color });
@@ -210,7 +210,7 @@ function draw_quarter_circle(corner_join_x, corner_join_y, vertical_direction, h
 	var arc = `a${cfg.edge_thickness} ${cfg.edge_thickness} 0 0 ${sweep_flag} ${-arc_dx} ${arc_dy}`;
 	var fill_corner = `l 0 ${post_move} z`;
 
-	append_svg_node(svg, 'path', { d: `${move_to_corner} ${arc} ${fill_corner}`, fill: cfg.color});
+	return append_svg_node(svg, 'path', { d: `${move_to_corner} ${arc} ${fill_corner}`, fill: cfg.color});
 }
 
 function draw_hexagon(center_x, center_y) {

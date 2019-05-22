@@ -46,3 +46,22 @@ const CELL_COLOR =
 	'BLACK': 1,
 	'START_HUES': 2
 };
+
+function is_vertical(direction) {
+	return direction == DIRECTION.NORTH || direction == DIRECTION.SOUTH;
+}
+
+function flip_direction(direction) {
+	switch(direction) {
+		case DIRECTION.NORTH:
+			return DIRECTION.SOUTH;
+		case DIRECTION.EAST:
+			return DIRECTION.WEST;
+		case DIRECTION.SOUTH:
+			return DIRECTION.NORTH;
+		case DIRECTION.WEST:
+			return DIRECTION.EAST;
+		default:
+			throw "Direction passed to flip_direction was not valid";
+	}
+}
