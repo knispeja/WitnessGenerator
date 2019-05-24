@@ -83,6 +83,7 @@ class MouseTracker {
 	constructor() {
 		this.previous_x;
 		this.previous_y;
+		this.movement_buffer = [];
 		document.onmousemove = this.on_mouse_move;
 	};
 
@@ -90,11 +91,11 @@ class MouseTracker {
 		if (path_display.mouse_tracker.previous_x != undefined) {
 			var delta_x = event.pageX - path_display.mouse_tracker.previous_x;
 			var delta_y = event.pageY - path_display.mouse_tracker.previous_y;
+			var delta_x_mag = Math.abs(delta_x);
+			var delta_y_mag = Math.abs(delta_y);
 
 			var direction;
-			var magnitude;
-			if (delta_x > delta_y) {
-				magnitude = delta_x;
+			if (delta_x_mag > delta_y_mag) {
 				if (delta_x > 0) {
 					direction = DIRECTION.EAST;
 				}
@@ -103,7 +104,6 @@ class MouseTracker {
 				}
 			}
 			else {
-				magnitude = delta_y;
 				if (delta_y > 0) {
 					direction = DIRECTION.SOUTH;
 				}
@@ -112,11 +112,28 @@ class MouseTracker {
 				}
 			}
 
-			on_attempted_move(direction);
+			path_display.mouse_tracker.on_mouse_move_toward(direction);
 		}
 
 		path_display.mouse_tracker.previous_x = event.pageX;
 		path_display.mouse_tracker.previous_y = event.pageY;
+	}
+
+	on_mouse_move_toward(direction) {
+		var movement_buffer = path_display.mouse_tracker.movement_buffer;
+		for (var i=0; i<movement_buffer.length; i++) {
+			if (movement_buffer[i] != direction) {
+				path_display.mouse_tracker.movement_buffer = [];
+				return false;
+			}
+		}
+
+		movement_buffer.push(direction);
+		if (movement_buffer.length < 5) {
+			return false;
+		}
+		path_display.mouse_tracker.movement_buffer = [];
+		return on_attempted_move(direction);
 	}
 
 	dispose() {
@@ -149,7 +166,7 @@ function on_attempted_move(direction) {
 		if (!new_edge.is_traversible()) {
 			return false;
 		}
-		new_edge.graphics_object.setAttributeNS(null, 'fill', 'red');
+		new_edge.graphics_object.setAttributeNS(null, 'fill', cfg.path_color);
 		new_path_object = new_edge;
 		// this.path_objects.push(traversible); // push the new graphics object
 	} else {
