@@ -75,6 +75,9 @@ class Puzzle {
 		this.generate_colored_squares();
 		this.for_each_node(this.generate_end_node);
 
+		// Draw before resetting, if we're in debug mode we'll draw the solution
+		draw_puzzle(puzzle);
+
 		// Reset variables for pathing
 		this.reset_path();
 		this.regions = null;

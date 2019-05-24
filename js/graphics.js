@@ -31,14 +31,13 @@ function draw_puzzle(puzzle) {
 }
 
 function draw_cell(cell) {
-	if (cell.cell_type != CELL_TYPE.SQUARE) {
-		return;
+	if (cell.cell_type == CELL_TYPE.SQUARE) {
+		var side_length = cfg.colored_square_side_length;
+		var coord_mod = cfg.edge_spacing/2 + cfg.edge_thickness/2 - side_length/2;
+		var x = cell.x * cfg.edge_spacing + coord_mod;
+		var y = cell.y * cfg.edge_spacing + coord_mod;
+		append_svg_node(svg, 'rect', { x: x, y: y, rx:4, ry:4, width: side_length, height: side_length, fill: cell.color });
 	}
-	var side_length = cfg.colored_square_side_length;
-	var coord_mod = cfg.edge_spacing/2 + cfg.edge_thickness/2 - side_length/2;
-	var x = cell.x * cfg.edge_spacing + coord_mod;
-	var y = cell.y * cfg.edge_spacing + coord_mod;
-	append_svg_node(svg, 'rect', { x: x, y: y, rx:4, ry:4, width: side_length, height: side_length, fill: cell.color });
 }
 
 function draw_node(node) {
@@ -55,7 +54,7 @@ function draw_edges(node) {
 			height -= cfg.edge_thickness;
 		}
 
-		var edge_color = node.north.traversed ? 'blue' : cfg.color;
+		var edge_color = DEBUG && node.north.traversed ? cfg.solution_color : cfg.color;
 		node.north.graphics_object = append_svg_node(svg, 'rect', { x: x, y: y, width: cfg.edge_thickness, height: height, fill: edge_color });
 		if (node.north.edge_type == EDGE_TYPE.OBSTACLE) {
 			append_svg_node(svg, 'rect', { x: x, y: y + cfg.edge_spacing/2 - cfg.obstacle_gap_size/2 - cfg.edge_thickness/2, width: cfg.edge_thickness, height: cfg.obstacle_gap_size, fill: cfg.background_color });
@@ -135,7 +134,7 @@ function draw_edges(node) {
 			draw_end(west_corner_x - cfg.edge_thickness, node.y * cfg.edge_spacing + cfg.edge_thickness/2, undefined, DIRECTION.WEST);
 		}
 
-		var edge_color = node.west.traversed ? 'blue' : cfg.color;
+		var edge_color = DEBUG && node.west.traversed ? cfg.solution_color : cfg.color;
 		
 		// Draw horizontal edge to the west
 		node.west.graphics_object = append_svg_node(svg, 'rect', { x: west_corner_x, y: y, width: edge_length, height: cfg.edge_thickness, fill: edge_color });

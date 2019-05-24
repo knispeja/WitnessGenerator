@@ -1,3 +1,5 @@
+const DEBUG = false;
+
 const DIRECTION =
 {
 	'NORTH': 0,
