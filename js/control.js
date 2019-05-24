@@ -50,17 +50,36 @@ class PathDisplay {
 			case 38: return on_attempted_full_step(DIRECTION.NORTH);
 			case 39: return on_attempted_full_step(DIRECTION.EAST);
 			case 40: return on_attempted_full_step(DIRECTION.SOUTH);
+			
+			case 8:  // Backspace
+			case 13: // Enter
+			case 27: // Escape
+			case 36: // Delete
+				return path_display.stop_drawing();
 		}
 	}
 
 	move_forward_to(traversible, direction_moved) {
 		this.directions_moved.push(direction_moved);
+		if (!this.path_head_is_node) {
+			var old_edge = puzzle.get_head_of_path().graphics_object;
+			var x = old_edge.getAttributeNS(null, 'x');
+			var y = old_edge.getAttributeNS(null, 'y');
+			var width = old_edge.getAttributeNS(null, 'width');
+			var height = old_edge.getAttributeNS(null, 'height')
+			var path_edge = append_svg_node(svg, 'rect', { x: x, y: y, width: width, height: height, fill: cfg.path_color });
+			this.path_objects.push(path_edge);
+		}
+
 		this.path_head_is_node = !this.path_head_is_node;
 		puzzle.set_traversed(traversible);
 	}
 
 	move_backwards() {
 		this.directions_moved.pop();
+		if (!this.path_head_is_node) {
+			svg.removeChild(this.path_objects.pop());
+		}
 		this.path_head_is_node = !this.path_head_is_node;
 		puzzle.remove_head_of_path();
 	}
@@ -154,9 +173,6 @@ function on_attempted_move(direction) {
 	var new_path_object;
 
 	if (flip_direction(direction) == path_display.last_direction_moved()) {
-		if (!path_display.path_head_is_node) {
-			path_head.graphics_object.setAttributeNS(null, 'fill', cfg.color);
-		}
 		path_display.move_backwards();
 		return true;
 	}
@@ -166,9 +182,7 @@ function on_attempted_move(direction) {
 		if (!new_edge.is_traversible()) {
 			return false;
 		}
-		new_edge.graphics_object.setAttributeNS(null, 'fill', cfg.path_color);
 		new_path_object = new_edge;
-		// this.path_objects.push(traversible); // push the new graphics object
 	} else {
 		if (is_vertical(direction) != path_head.is_vertical) {
 			return false;
