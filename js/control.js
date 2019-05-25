@@ -17,7 +17,7 @@ class PathDisplay {
 
 	start_drawing(start_node) {
 		document.body.addEventListener('click', path_display.stop_drawing, true);
-		window.onkeyup = path_display.handle_key;
+		window.addEventListener('keydown', path_display.handle_key, true);
 		this.currently_drawing_path = true;
 		this.start_node_overlay = start_node;
 		this.mouse_tracker = new MouseTracker();
@@ -27,10 +27,14 @@ class PathDisplay {
 	}
 
 	stop_drawing() {
+		if (!path_display.currently_drawing_path) {
+			return;
+		}
+
 		document.body.removeEventListener('click', path_display.stop_drawing, true);
-		window.removeEventListener("keypress", path_display.handle_key, true);
+		window.removeEventListener('keydown', path_display.handle_key, true);
 		path_display.mouse_tracker.dispose();
-		path_display.mouse_tracker = null;
+
 		path_display.currently_drawing_path = false;
 		svg.removeChild(path_display.start_node_overlay);
 
@@ -164,6 +168,7 @@ function on_attempted_full_step(direction) {
 function on_attempted_move(direction) {
 	if (puzzle.path.length == 0) {
 		path_display.stop_drawing();
+		return;
 	}
 
 	var path_head = puzzle.get_head_of_path();
