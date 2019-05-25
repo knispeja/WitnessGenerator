@@ -61,6 +61,8 @@ class PathDisplay {
 
 	move_forward_to(traversible, direction_moved) {
 		this.directions_moved.push(direction_moved);
+		this.path_head_is_node = !this.path_head_is_node;
+		puzzle.set_traversed(traversible);
 		if (!this.path_head_is_node) {
 			var old_edge = puzzle.get_head_of_path().graphics_object;
 			var x = old_edge.getAttributeNS(null, 'x');
@@ -70,9 +72,6 @@ class PathDisplay {
 			var path_edge = append_svg_node(svg, 'rect', { x: x, y: y, width: width, height: height, fill: cfg.path_color });
 			this.path_objects.push(path_edge);
 		}
-
-		this.path_head_is_node = !this.path_head_is_node;
-		puzzle.set_traversed(traversible);
 	}
 
 	move_backwards() {
@@ -163,9 +162,7 @@ class MouseTracker {
 function on_attempted_full_step(direction) {
 	if(on_attempted_move(direction)) {
 		if (!path_display.path_head_is_node) {
-			if (!on_attempted_move(direction)) {
-				path_display.move_backwards();
-			}
+			on_attempted_move(direction);
 		}
 	}
 }
@@ -194,6 +191,9 @@ function on_attempted_move(direction) {
 			return false;
 		}
 		new_path_object = path_head.get_other_connecting_node(puzzle.path[puzzle.path.length - 2]);
+		if (new_path_object.traversed) {
+			return false;
+		}
 	}
 
 	path_display.move_forward_to(new_path_object, direction);
