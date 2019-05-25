@@ -163,12 +163,18 @@ class MouseTracker {
 function on_attempted_full_step(direction) {
 	if(on_attempted_move(direction)) {
 		if (!path_display.path_head_is_node) {
-			on_attempted_move(direction);
+			if (!on_attempted_move(direction)) {
+				path_display.move_backwards();
+			}
 		}
 	}
 }
 
 function on_attempted_move(direction) {
+	if (puzzle.path.length == 0) {
+		path_display.stop_drawing();
+	}
+
 	var path_head = puzzle.get_head_of_path();
 	var new_path_object;
 
@@ -188,9 +194,6 @@ function on_attempted_move(direction) {
 			return false;
 		}
 		new_path_object = path_head.get_other_connecting_node(puzzle.path[puzzle.path.length - 2]);
-		if (new_path_object.traversed) {
-			return false;
-		}
 	}
 
 	path_display.move_forward_to(new_path_object, direction);
