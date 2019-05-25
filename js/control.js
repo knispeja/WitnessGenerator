@@ -63,22 +63,16 @@ class PathDisplay {
 		this.directions_moved.push(direction_moved);
 		this.path_head_is_node = !this.path_head_is_node;
 		puzzle.set_traversed(traversible);
-		if (!this.path_head_is_node) {
-			var old_edge = puzzle.get_head_of_path().graphics_object;
-			var x = old_edge.getAttributeNS(null, 'x');
-			var y = old_edge.getAttributeNS(null, 'y');
-			var width = old_edge.getAttributeNS(null, 'width');
-			var height = old_edge.getAttributeNS(null, 'height')
-			var path_edge = append_svg_node(svg, 'rect', { x: x, y: y, width: width, height: height, fill: cfg.path_color });
-			this.path_objects.push(path_edge);
-		}
+
+		var old_rect = puzzle.get_head_of_path().graphics_object;
+		var path_edge = clone_svg_node(old_rect);
+		path_edge.setAttributeNS(null, 'fill', cfg.path_color);
+		this.path_objects.push(path_edge);
 	}
 
 	move_backwards() {
 		this.directions_moved.pop();
-		if (!this.path_head_is_node) {
-			svg.removeChild(this.path_objects.pop());
-		}
+		svg.removeChild(this.path_objects.pop());
 		this.path_head_is_node = !this.path_head_is_node;
 		puzzle.remove_head_of_path();
 	}

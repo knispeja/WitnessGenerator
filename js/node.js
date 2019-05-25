@@ -15,6 +15,7 @@ class Node {
 
 		this.node_type = NODE_TYPE.NORMAL;
 		this.traversed = false;
+		this.graphics_object = null;
 	}
 
 	is_neighbors_with(node) {

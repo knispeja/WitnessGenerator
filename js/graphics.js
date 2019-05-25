@@ -12,6 +12,15 @@ function append_svg_node(parent_node, node_type, property_values) {
 	return node;
 }
 
+function clone_svg_node(node) {
+	var new_node_props = {};
+	for (var i=0; i<node.attributes.length; i++) {
+		var attr = node.attributes.item(i);
+		new_node_props[attr.localName] = attr.value;
+	}
+	return append_svg_node(svg, node.nodeName, new_node_props);
+}
+
 function draw_puzzle(puzzle) {
 	for (var x=0; x<puzzle.nodes.length; x++) {
 		for (var y=0; y<puzzle.nodes[x].length; y++)
@@ -49,13 +58,14 @@ function draw_edges(node) {
 	if (node.north.edge_type != EDGE_TYPE.BORDER) {
 		var x = cfg.edge_spacing * node.x;
 		var y = cfg.edge_spacing * node.y - cfg.edge_spacing + cfg.edge_thickness;
-		var height = cfg.edge_spacing;
-		if (node.south.edge_type == EDGE_TYPE.BORDER) {
-			height -= cfg.edge_thickness;
-		}
+		var height = cfg.edge_spacing - cfg.edge_thickness;
 
 		var edge_color = DEBUG && node.north.traversed ? cfg.solution_color : cfg.color;
 		node.north.graphics_object = append_svg_node(svg, 'rect', { x: x, y: y, width: cfg.edge_thickness, height: height, fill: edge_color });
+		if (node.south.edge_type != EDGE_TYPE.BORDER) {
+			node.graphics_object = append_svg_node(svg, 'rect', { x: x, y: y + height, width: cfg.edge_thickness, height: cfg.edge_thickness, fill: edge_color });
+		}
+
 		if (node.north.edge_type == EDGE_TYPE.OBSTACLE) {
 			append_svg_node(svg, 'rect', { x: x, y: y + cfg.edge_spacing/2 - cfg.obstacle_gap_size/2 - cfg.edge_thickness/2, width: cfg.edge_thickness, height: cfg.obstacle_gap_size, fill: cfg.background_color });
 		} else if (node.north.edge_type == EDGE_TYPE.PELLET) {
@@ -76,18 +86,16 @@ function draw_edges(node) {
 			var vertical_direction;
 			if (node.south.edge_type == EDGE_TYPE.BORDER) {
 				vertical_direction = DIRECTION.SOUTH;
-				draw_quarter_circle(x, y, vertical_direction, DIRECTION.EAST);
+				node.graphics_object = draw_quarter_circle(x, y, vertical_direction, DIRECTION.EAST);
 			}
 			else {
 				vertical_direction = DIRECTION.NORTH;
-				draw_quarter_circle(x, y + cfg.edge_thickness, vertical_direction, DIRECTION.EAST);
+				node.graphics_object = draw_quarter_circle(x, y + cfg.edge_thickness, vertical_direction, DIRECTION.EAST);
 			}
 		
 			if (node.node_type == NODE_TYPE.END) {
 				draw_end_corner(x + cfg.edge_thickness/2, y + cfg.edge_thickness/2, vertical_direction, DIRECTION.EAST);
 			}
-
-			edge_length = cfg.edge_spacing - cfg.edge_thickness;
 		}
 		else if (node.node_type == NODE_TYPE.END) {
 			// Draw end nodes
@@ -117,11 +125,11 @@ function draw_edges(node) {
 			var vertical_direction;
 			if (west_node.south.edge_type == EDGE_TYPE.BORDER) {
 				vertical_direction = DIRECTION.SOUTH;
-				draw_quarter_circle(west_corner_x, y, vertical_direction, DIRECTION.WEST);
+				west_node.graphics_object = draw_quarter_circle(west_corner_x, y, vertical_direction, DIRECTION.WEST);
 			}
 			else {
 				vertical_direction = DIRECTION.NORTH;
-				draw_quarter_circle(west_corner_x, y + cfg.edge_thickness, vertical_direction, DIRECTION.WEST);
+				west_node.graphics_object = draw_quarter_circle(west_corner_x, y + cfg.edge_thickness, vertical_direction, DIRECTION.WEST);
 			}
 
 			// Draw corner end node
@@ -137,8 +145,14 @@ function draw_edges(node) {
 		var edge_color = DEBUG && node.west.traversed ? cfg.solution_color : cfg.color;
 		
 		// Draw horizontal edge to the west
-		node.west.graphics_object = append_svg_node(svg, 'rect', { x: west_corner_x, y: y, width: edge_length, height: cfg.edge_thickness, fill: edge_color });
 		
+		var west_edge_width = edge_length - cfg.edge_thickness;
+		node.west.graphics_object = append_svg_node(svg, 'rect', { x: west_corner_x, y: y, width: west_edge_width, height: cfg.edge_thickness, fill: edge_color });
+		
+		if (node.east.edge_type != EDGE_TYPE.BORDER && (node.north.edge_type == EDGE_TYPE.BORDER || node.south.edge_type == EDGE_TYPE.BORDER)) {
+			node.graphics_object = append_svg_node(svg, 'rect', { x: west_corner_x + west_edge_width, y: y, width: cfg.edge_thickness, height: cfg.edge_thickness, fill: edge_color });
+		}
+
 		if (node.west.edge_type == EDGE_TYPE.OBSTACLE) {
 			append_svg_node(svg, 'rect', { x: west_corner_x + cfg.edge_spacing/2 - cfg.obstacle_gap_size/2 - cfg.edge_thickness/2, y: y, width: cfg.obstacle_gap_size, height: cfg.edge_thickness, fill: cfg.background_color });
 		} else if (node.west.edge_type == EDGE_TYPE.PELLET) {
