@@ -11,7 +11,7 @@ class CellRegion {
 		if (this.color == null) {
 			this.color = cell.color;
 		}
-		else if (cell.has_color_compatible_with(this.color)) {
+		else if (!cell.has_color_compatible_with(this.color)) {
 			this.is_valid = false;
 		}
 	}

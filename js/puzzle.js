@@ -12,6 +12,8 @@ class Puzzle {
 
 		this.regions = null;
 
+		this.on_solve_fxn = null;
+
 		// Init cells
 		for (var x=0; x<this.cell_count_x; x++)
 		{
@@ -64,6 +66,13 @@ class Puzzle {
 		}
 	}
 
+	on_solve() {
+		alert("Puzzle solved!");
+		if (this.on_solve_fxn) {
+			this.on_solve_fxn();
+		}
+	}
+
 	init_random_puzzle(target_path_length) {
 		this.start_node = random_value_from_2d_array(this.nodes);
 		this.start_node.node_type = NODE_TYPE.START;
@@ -75,17 +84,61 @@ class Puzzle {
 		this.generate_colored_squares();
 		this.for_each_node(this.generate_end_node);
 
+		if (!this.is_path_valid()) {
+			throw "Generated path is not valid with the created puzzle elements";
+		}
+
 		// Draw before resetting, if we're in debug mode we'll draw the solution
 		draw_puzzle(puzzle);
 
 		// Reset variables for pathing
 		this.reset_path();
-		this.regions = null;
+		this.clear_regions();
 	}
 
 	set_traversed(traversible) {
 		traversible.traversed = true;
 		this.path.push(traversible);
+	}
+
+	// Does not technically check if path is a continuous line, just that it fulfils the puzzle requirements
+	is_path_valid() {
+		var path_head = this.get_head_of_path();
+		if (!path_head.node_type) {
+			return false; // Head of path is an edge, not a node
+		}
+
+		if (this.start_node != this.path[0]) {
+			return false; // Path does not start at start node
+		}
+
+		if (path_head.node_type != NODE_TYPE.END) {
+			return false; // Path does not end at an end node
+		}
+
+		window.path_is_valid = true;
+		this.for_each_edge((edge) => {
+			if (edge.edge_type == EDGE_TYPE.PELLET && !edge.traversed) {
+				window.path_is_valid = false;
+			} 
+		});
+		if (!window.path_is_valid) {
+			return false; // Path does not cross all pellets
+		}
+
+		// Keep region check at bottom -- it's the slowest and modifies the regions variable
+		if (this.regions.length == 0) {
+			this.compute_regions();
+		}
+		var all_regions_valid = true;
+		for (var i=0; i<this.regions.length; i++) {
+			if (!this.regions[i].is_valid) {
+				all_regions_valid = false; // Region contains colors from multiple colors
+			}
+		}
+		this.regions = []; // Reset regions for the next time we call this method (no need to call clear, compute_regions() does this)
+
+		return all_regions_valid;
 	}
 
 	generate_whimsical_path(target_path_length) {
@@ -138,7 +191,7 @@ class Puzzle {
 	}
 
 	compute_regions() {
-		this.regions = [];
+		this.clear_regions();
 		for (var x=0; x<this.cells.length; x++) {
 			for (var y=0; y<this.cells[x].length; y++) {
 				var cell = this.cells[x][y];
@@ -149,6 +202,11 @@ class Puzzle {
 				}
 			}
 		}
+	}
+
+	clear_regions() {
+		this.regions = [];
+		this.for_each_cell((cell) => cell.region = null);
 	}
 
 	compute_region_recursive(current_cell, current_region) {
@@ -262,6 +320,15 @@ class Puzzle {
 			for (var y=0; y<this.nodes[x].length; y++) {
 				var node = this.nodes[x][y];
 				node_fxn(node);
+			}
+		}
+	}
+
+	for_each_cell(cell_fxn) {
+		for (var x=0; x<this.cells.length; x++) {
+			for (var y=0; y<this.cells[x].length; y++) {
+				var cell = this.cells[x][y];
+				cell_fxn(cell);
 			}
 		}
 	}

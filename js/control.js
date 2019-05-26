@@ -74,6 +74,15 @@ class PathDisplay {
 		var path_edge = clone_svg_node(old_rect);
 		path_edge.setAttributeNS(null, 'fill', cfg.path_color);
 		this.path_objects.push(path_edge);
+
+		if (this.path_head_is_node && traversible.node_type == NODE_TYPE.END) {
+			if(puzzle.is_path_valid()) {
+				puzzle.for_each_step_in_path(null, (edge) => {
+					// TODO: Need a concept of edge.path_object instead -> // edge.graphics_object.setAttributeNS(null, 'fill', cfg.solution_color)
+				});
+				puzzle.on_solve();
+			}
+		}
 	}
 
 	move_backwards() {
