@@ -1,9 +1,11 @@
 class Puzzle {
-	constructor(cell_count_x, cell_count_y) {
-		this.cell_count_x = cell_count_x;
-		this.cell_count_y = cell_count_y;
-		this.node_count_x = cell_count_x + 1;
-		this.node_count_y = cell_count_y + 1;
+	constructor(puzzle_gen_config) {
+		this.puzzle_gen_config = puzzle_gen_config;
+
+		this.cell_count_x = this.puzzle_gen_config.width_in_cells;
+		this.cell_count_y = this.puzzle_gen_config.height_in_cells;
+		this.node_count_x = this.cell_count_x + 1;
+		this.node_count_y = this.cell_count_y + 1;
 
 		this.start_node = null;
 		this.cells = [];
@@ -64,6 +66,8 @@ class Puzzle {
 				this.nodes[x][y] = node;
 			}
 		}
+
+		this.init_random_puzzle();
 	}
 
 	on_solve() {
@@ -73,23 +77,31 @@ class Puzzle {
 		}
 	}
 
-	init_random_puzzle(target_path_length) {
+	init_random_puzzle() {
 		this.start_node = random_value_from_2d_array(this.nodes);
 		this.start_node.node_type = NODE_TYPE.START;
-		this.generate_whimsical_path(target_path_length);
+		this.generate_whimsical_path(this.puzzle_gen_config.min_path_length_generated);
 		this.compute_regions();
 
-		this.for_each_step_in_path(undefined, this.generate_pellet);
-		this.for_each_edge(this.generate_obstacle);
-		this.generate_colored_squares();
-		this.for_each_node(this.generate_end_node);
+		if (!this.puzzle_gen_config.disable_pellets) {
+			this.for_each_step_in_path(undefined, this.generate_pellet);
+		}
+		if (!this.puzzle_gen_config.disable_obstacles) {
+			this.for_each_edge(this.generate_obstacle);
+		}
+		if (!this.puzzle_gen_config.disable_colored_squares) {
+			this.generate_colored_squares();
+		}
+		if (!this.puzzle_gen_config.disable_extra_end_nodes) {
+			this.for_each_node(this.generate_end_node);
+		}
 
 		if (!this.is_path_valid()) {
 			throw "Generated path is not valid with the created puzzle elements";
 		}
 
 		// Draw before resetting, if we're in debug mode we'll draw the solution
-		draw_puzzle(puzzle);
+		draw_puzzle(this);
 
 		// Reset variables for pathing
 		this.reset_path();
