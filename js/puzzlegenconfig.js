@@ -16,9 +16,25 @@ class PuzzleGenerationConfiguration {
 
     	this.min_path_length_generated = this.width_in_cells * this.height_in_cells;
 
-        this.disable_pellets = false;
-        this.disable_obstacles = false;
-        this.disable_colored_squares = false;
-        this.disable_extra_end_nodes = false;
-	}
+        this.disable_pellets = !string_to_boolean(urlParams.pellets, true);
+        this.disable_obstacles = !string_to_boolean(urlParams.obstacles, true);
+        this.disable_colored_squares = !string_to_boolean(urlParams.squares, true);
+        this.disable_extra_end_nodes = !string_to_boolean(urlParams.extraterminals, true);
+    }
+}
+
+// TODO: put in utils class of some kind
+function string_to_boolean(str, default_value) {
+    if (str == undefined || str == null) {
+        return default_value;
+    }
+
+    var normalized = str.toLowerCase().trim();
+    if (normalized == 'true' || normalized == '1') {
+        return true;
+    }
+    else if (normalized == 'false' || normalized == '0') {
+        return false;
+    }
+    return default_value;
 }
