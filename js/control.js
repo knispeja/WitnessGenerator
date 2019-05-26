@@ -31,11 +31,11 @@ class PathDisplay {
 			return;
 		}
 
+		document.exitPointerLock();
 		document.body.removeEventListener('click', path_display.stop_drawing, true);
 		window.removeEventListener('keydown', path_display.handle_key, true);
 		path_display.mouse_tracker.dispose();
 
-		path_display.currently_drawing_path = false;
 		svg.removeChild(path_display.start_node_overlay);
 
 		path_display.path_objects.forEach((path_object) => {
@@ -46,6 +46,8 @@ class PathDisplay {
 		path_display.path_objects = [];
 		path_display.directions_moved = [];
 		puzzle.reset_path();
+
+		path_display.currently_drawing_path = false;
 	}
 
 	handle_key(e) {
@@ -101,12 +103,19 @@ class MouseTracker {
 		this.previous_y;
 		this.movement_buffer = [];
 		document.onmousemove = this.on_mouse_move;
+		document.body.requestPointerLock();
 	};
 
 	on_mouse_move() {
 		if (path_display.mouse_tracker.previous_x != undefined) {
-			var delta_x = event.pageX - path_display.mouse_tracker.previous_x;
-			var delta_y = event.pageY - path_display.mouse_tracker.previous_y;
+			var delta_x =	event.movementX			||
+							event.mozMovementX		||
+							event.webkitMovementX	||
+							0;
+			var delta_y = 	event.movementY 		||
+							event.mozMovementY      ||
+							event.webkitMovementY   ||
+							0;
 			var delta_x_mag = Math.abs(delta_x);
 			var delta_y_mag = Math.abs(delta_y);
 

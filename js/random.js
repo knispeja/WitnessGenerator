@@ -17,3 +17,4 @@ function random_integer_between(min, max) {
 
 	return min + Math.floor(Math.random() * (max - min + 1));
 };
+// TODO: Switch to a better PRNG
