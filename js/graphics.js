@@ -3,6 +3,10 @@ function init_graphics(draw_config) {
 	svg = append_svg_node(document.body, "svg");
 }
 
+function reset_graphics() {
+	svg.parentNode.removeChild(svg);
+}
+
 function append_svg_node(parent_node, node_type, property_values) {
 	var node = document.createElementNS("http://www.w3.org/2000/svg", node_type);
 	for (var property in property_values) {

@@ -1,4 +1,5 @@
 const DEBUG = false;
+const TIMES_TO_REGENERATE = 20;
 
 const DIRECTION =
 {

@@ -1,4 +1,6 @@
 var seeded = false;
+prevent_url_seed = false;
+
 function ensure_seeded() {
 	if (seeded) {
 		return;
@@ -6,13 +8,20 @@ function ensure_seeded() {
 
 	if (url_params.seed === undefined) {
 		// Seed Math.random() and set URL param to that seed
-		addUrlParameter("seed", Math.seedrandom());
+		var new_seed = Math.seedrandom();
+		if (!prevent_url_seed) {
+			addUrlParameter("seed", new_seed);
+		}
 	}
 	else {
 		// Use existing URL param
 		Math.seedrandom(url_params.seed);
 	}
 	seeded = true;
+}
+
+function reset_seed() {
+	seeded = false;
 }
 
 function random_value_from_2d_array(array) {

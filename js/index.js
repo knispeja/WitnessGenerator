@@ -1,10 +1,34 @@
-window.onload = function() {
+window.onload = async function() {
 	url_params = getJsonFromUrl();
-	init_graphics(new PuzzleDrawConfiguration('#B1F514'));
-	puzzle = new Puzzle(new PuzzleGenerationConfiguration());
+
+	var regenerations = 0;
+	if (url_params.seed !== undefined) {
+		regenerations = TIMES_TO_REGENERATE;
+	}
+
+	while (true) {
+		var final_puzzle = regenerations++ >= TIMES_TO_REGENERATE;
+		prevent_url_seed = !final_puzzle;
+
+		init_graphics(new PuzzleDrawConfiguration('#B1F514'));
+		puzzle = new Puzzle(new PuzzleGenerationConfiguration());
+		if (!final_puzzle) {
+			await sleep(25);
+			reset_graphics();
+			reset_seed();
+		}
+		else {
+			break;
+		}
+	}
+
 	puzzle.on_solve_fxn = () => {
 		alert("Solved it!");
 	}
+}
+
+function sleep(time_ms) {
+	return new Promise((resolve) => setTimeout(resolve, time_ms));
 }
 
 function getJsonFromUrl(url) {
@@ -21,17 +45,18 @@ function getJsonFromUrl(url) {
 }
 
 function addUrlParameter(key, value) {
-    var url_params = location.search;
-    if (url_params.length > 0) {
-        url_params += "&";
+    var temp_url_params = location.search;
+    if (temp_url_params.length > 0) {
+        temp_url_params += "&";
     }
     else {
-        url_params += "?";
+        temp_url_params += "?";
     }
 
     var encoded_value = encodeURIComponent(value);
-    url_params += `${key}=${encoded_value}`;
-
-    history.pushState(null, null, window.location.pathname + url_params);
+	temp_url_params += `${key}=${encoded_value}`;
+	
+	url_params[key] = encoded_value;
+    history.pushState(null, null, window.location.pathname + temp_url_params);
 }
    
