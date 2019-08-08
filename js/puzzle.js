@@ -71,7 +71,6 @@ class Puzzle {
 	}
 
 	on_solve() {
-		alert("Puzzle solved!");
 		if (this.on_solve_fxn) {
 			this.on_solve_fxn();
 		}

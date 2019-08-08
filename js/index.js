@@ -1,7 +1,10 @@
 window.onload = function() {
 	init_graphics(new PuzzleDrawConfiguration('#B1F514'));
 	puzzle = new Puzzle(new PuzzleGenerationConfiguration());
-	puzzle.on_solve_fxn = () => location.reload();
+	puzzle.on_solve_fxn = () => {
+		alert("Solved it!");
+		location.reload();
+	}
 }
 
 function getJsonFromUrl(url) {
