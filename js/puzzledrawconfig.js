@@ -1,5 +1,9 @@
 class PuzzleDrawConfiguration {
 	constructor(color) {
+		if (color === undefined) {
+			color = random_value_from_array(PUZZLE_COLORS);
+		}
+
 		this.color = color;
 		this.background_color = window.getComputedStyle(document.body, null).getPropertyValue('background-color');
 		this.edge_spacing = 100;

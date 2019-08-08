@@ -6,11 +6,20 @@ window.onload = async function() {
 		regenerations = TIMES_TO_REGENERATE;
 	}
 
+	var puzzle_color;
 	while (true) {
 		var final_puzzle = regenerations++ >= TIMES_TO_REGENERATE;
 		prevent_url_seed = !final_puzzle;
 
-		init_graphics(new PuzzleDrawConfiguration('#B1F514'));
+		if (puzzle_color === undefined) {
+			var draw_config = new PuzzleDrawConfiguration();
+			puzzle_color = draw_config.color;
+			init_graphics(draw_config);
+		}
+		else {
+			init_graphics(new PuzzleDrawConfiguration(puzzle_color));
+		}
+
 		puzzle = new Puzzle(new PuzzleGenerationConfiguration());
 		if (!final_puzzle) {
 			await sleep(25);
