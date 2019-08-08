@@ -76,9 +76,10 @@ class PathDisplay {
 		this.path_objects.push(path_edge);
 
 		if (this.path_head_is_node && traversible.node_type == NODE_TYPE.END) {
-			if(puzzle.is_path_valid()) {
-				puzzle.for_each_step_in_path(null, (edge) => {
-					// TODO: Need a concept of edge.path_object instead -> // edge.graphics_object.setAttributeNS(null, 'fill', cfg.solution_color)
+			if (puzzle.is_path_valid()) {
+				// Change color of entire path
+				this.path_objects.forEach((path_object) => {
+					path_object.setAttributeNS(null, 'fill', cfg.solution_color)
 				});
 				puzzle.on_solve();
 			}
