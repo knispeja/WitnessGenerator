@@ -1,25 +1,23 @@
 class PuzzleGenerationConfiguration {
 	constructor() {
-        var urlParams = getJsonFromUrl();
-
-        if (urlParams.width) {
-            this.width_in_cells = parseInt(urlParams.width);
+        if (url_params.width) {
+            this.width_in_cells = parseInt(url_params.width);
         } else {
             this.width_in_cells = random_integer_between(3, 8);
         }
 
-        if (urlParams.height) {
-            this.height_in_cells = parseInt(urlParams.height);
+        if (url_params.height) {
+            this.height_in_cells = parseInt(url_params.height);
         } else {
             this.height_in_cells = random_integer_between(3, 5);
         }
 
     	this.min_path_length_generated = this.width_in_cells * this.height_in_cells;
 
-        this.disable_pellets = !string_to_boolean(urlParams.pellets, true);
-        this.disable_obstacles = !string_to_boolean(urlParams.obstacles, true);
-        this.disable_colored_squares = !string_to_boolean(urlParams.squares, true);
-        this.disable_extra_end_nodes = !string_to_boolean(urlParams.extraterminals, true);
+        this.disable_pellets = !string_to_boolean(url_params.pellets, true);
+        this.disable_obstacles = !string_to_boolean(url_params.obstacles, true);
+        this.disable_colored_squares = !string_to_boolean(url_params.squares, true);
+        this.disable_extra_end_nodes = !string_to_boolean(url_params.extraterminals, true);
     }
 }
 

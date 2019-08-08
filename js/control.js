@@ -81,6 +81,7 @@ class PathDisplay {
 				this.path_objects.forEach((path_object) => {
 					path_object.setAttributeNS(null, 'fill', cfg.solution_color)
 				});
+				path_display.start_node_overlay.setAttributeNS(null, 'fill', cfg.solution_color);
 				puzzle.on_solve();
 			}
 		}
