@@ -11,8 +11,9 @@ class PuzzleGenerationConfiguration {
 
         if (url_params.height) {
             this.height_in_cells = parseInt(url_params.height);
-        } else {
-            this.height_in_cells = random_integer_between(3, 5, rng);
+        }
+        else {
+            this.height_in_cells = FORCE_SQUARE_PUZZLES ? this.width_in_cells : random_integer_between(3, 5, rng);
             url_params.height = this.height_in_cells;
             addUrlParameter('height', url_params.height);
         }
