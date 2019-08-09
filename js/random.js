@@ -1,4 +1,5 @@
 var seeded = false;
+var current_seed;
 prevent_url_seed = false;
 
 function ensure_seeded() {
@@ -8,9 +9,9 @@ function ensure_seeded() {
 
 	if (url_params.seed === undefined) {
 		// Seed Math.random() and set URL param to that seed
-		var new_seed = Math.seedrandom();
+		current_seed = Math.seedrandom();
 		if (!prevent_url_seed) {
-			addUrlParameter("seed", new_seed);
+			addUrlParameter("seed", current_seed);
 		}
 	}
 	else {
@@ -18,6 +19,10 @@ function ensure_seeded() {
 		Math.seedrandom(url_params.seed);
 	}
 	seeded = true;
+}
+
+function get_current_seed() {
+	return encodeURIComponent(current_seed);
 }
 
 function reset_seed() {

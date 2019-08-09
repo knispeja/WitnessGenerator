@@ -1,8 +1,8 @@
 const DEBUG = false;
-const GENERATION_SPEED_TEST = true;
+const GENERATION_SPEED_TEST = false;
 const GENERATION_TIME_MAX_MS = 1000;
 
-const TIMES_TO_REGENERATE = 20;
+const TIMES_TO_REGENERATE = 15; // 0 turns off regeneration effect
 const PUZZLE_COLORS = ['#B1F514', '#F39C12', '#8E44AD', '#F1C40F', '#3498DB', '#34495E', '#E74C3C'];
 
 const DIRECTION =
