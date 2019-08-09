@@ -29,23 +29,35 @@ function reset_seed() {
 	seeded = false;
 }
 
-function random_value_from_2d_array(array) {
-	return random_value_from_array(random_value_from_array(array));
+function random_value_from_2d_array(array, rng) {
+	return random_value_from_array(random_value_from_array(array, rng), rng);
 }
 
-function random_value_from_array(array) {
-	return array[random_array_index(array)];
+function random_value_from_array(array, rng) {
+	return array[random_array_index(array, rng)];
 }
 
-function random_array_index(array) {
-	return random_integer_between(0, array.length - 1);
+function random_array_index(array, rng) {
+	return random_integer_between(0, array.length - 1, rng);
 }
 
-function random_integer_between(min, max) {
+/* 
+RNG parameter is used so we can generate unimportant random values without affecting seeded values. For example, puzzle
+color doesn't always need to be generated, so generating it will affect the seed unless we use a different RNG object.
+*/
+function random_integer_between(min, max, rng) {
 	if (min > max) {
 		throw "First argument to random_integer_between should be less than the second";
 	}
 
-	ensure_seeded();
-	return min + Math.floor(Math.random() * (max - min + 1));
+	var random_value;
+	if (rng === undefined) {
+		ensure_seeded();
+		random_value = Math.random();
+	}
+	else {
+		random_value = rng();
+	}
+
+	return min + Math.floor(random_value * (max - min + 1));
 };

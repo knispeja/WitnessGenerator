@@ -354,10 +354,13 @@ class Puzzle {
 		if (edge.edge_type != EDGE_TYPE.NORMAL || edge.traversed) {
 			return;
 		}
-		if (Math.random() < 0.45) {
+		if (Math.random() < 0.42) {
 			edge.edge_type = EDGE_TYPE.OBSTACLE;
-			if (edge.node1.get_adjacent_pathable_edges().length < 2 || edge.node2.get_adjacent_pathable_edges().length < 2) {
-				edge.edge_type = EDGE_TYPE.NORMAL;
+			if (edge.node1.get_adjacent_pathable_edges().length == 0) {
+				//edge.node1.node_type = NODE_TYPE.UNREACHABLE;
+			}
+			if (edge.node2.get_adjacent_pathable_edges().length == 0) {
+				//edge.node2.node_type = NODE_TYPE.UNREACHABLE;
 			}
 		}
 	}

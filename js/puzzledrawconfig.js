@@ -1,7 +1,8 @@
 class PuzzleDrawConfiguration {
 	constructor(color) {
 		if (color === undefined) {
-			color = random_value_from_array(PUZZLE_COLORS);
+			var rng = new Math.seedrandom(); // Avoid affecting Math.random()
+			color = random_value_from_array(PUZZLE_COLORS, rng);
 		}
 
 		this.color = color;

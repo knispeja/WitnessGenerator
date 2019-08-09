@@ -1,9 +1,10 @@
 class PuzzleGenerationConfiguration {
 	constructor() {
+        var rng = new Math.seedrandom(); // Avoid affecting Math.random() in this method
         if (url_params.width) {
             this.width_in_cells = parseInt(url_params.width);
         } else {
-            this.width_in_cells = random_integer_between(3, 8);
+            this.width_in_cells = random_integer_between(3, 8, rng);
             url_params.width = this.width_in_cells;
             addUrlParameter('width', url_params.width);
         }
@@ -11,7 +12,7 @@ class PuzzleGenerationConfiguration {
         if (url_params.height) {
             this.height_in_cells = parseInt(url_params.height);
         } else {
-            this.height_in_cells = random_integer_between(3, 5);
+            this.height_in_cells = random_integer_between(3, 5, rng);
             url_params.height = this.height_in_cells;
             addUrlParameter('height', url_params.height);
         }
