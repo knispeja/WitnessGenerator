@@ -62,6 +62,13 @@ function move_backwards() {
 	puzzle.remove_head_of_path();
 }
 
+function last_direction_moved() {
+	if (directions_moved.length == 0) {
+		return null;
+	}
+	return directions_moved[directions_moved.length - 1];
+}
+
 // Begin drawing path
 function on_click_start_node(start_node_graphics_object) {
 	if (currently_drawing_path) {
@@ -104,10 +111,3 @@ function reset_path() {
 	path_head_is_node = true; // Always start at the start node
 }
 reset_path(); // Initialize these variables immediately
-
-function last_direction_moved() {
-	if (directions_moved.length == 0) {
-		return null;
-	}
-	return directions_moved[directions_moved.length - 1];
-}
