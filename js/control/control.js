@@ -57,21 +57,6 @@ class PathDisplay {
 		path_display.currently_drawing_path = false;
 	}
 
-	handle_key(e) {
-		switch (e.keyCode) {
-			case 37: return on_attempted_full_step(DIRECTION.WEST);
-			case 38: return on_attempted_full_step(DIRECTION.NORTH);
-			case 39: return on_attempted_full_step(DIRECTION.EAST);
-			case 40: return on_attempted_full_step(DIRECTION.SOUTH);
-			
-			case 8:  // Backspace
-			case 13: // Enter
-			case 27: // Escape
-			case 36: // Delete
-				return on_stop_drawing();
-		}
-	}
-
 	move_forward_to(traversible, direction_moved) {
 		// Move the path in the specified direction
 		this.directions_moved.push(direction_moved);
@@ -158,11 +143,9 @@ function on_click_start_node(start_node_graphics_object) {
 	path_display.start_drawing(start_node_graphics_object)
 	puzzle.set_traversed(puzzle.start_node);
 
-	// Listen for clicks and keypresses anywhere
+	// Add event listeners
 	document.body.addEventListener('click', on_stop_drawing, true);
-	window.addEventListener('keydown', path_display.handle_key, true);
-
-	// Begin tracking the mouse for movement through the puzzle
+	keyboard_tracker = new KeyboardTracker();
 	mouse_tracker = new MouseTracker();
 }
 
@@ -174,8 +157,8 @@ function on_stop_drawing() {
 
 	// Remove event listeners
 	document.body.removeEventListener('click', on_stop_drawing, true);
-	window.removeEventListener('keydown', path_display.handle_key, true);
 	mouse_tracker.dispose();
+	keyboard_tracker.dispose();
 
 	// Tell the path draw to stop drawing
 	path_display.stop_drawing();

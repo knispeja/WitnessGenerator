@@ -1,4 +1,4 @@
-class MouseTracker {
+class MouseTracker { // Disposable
 	constructor() {
 		this.previous_x;
 		this.previous_y;
