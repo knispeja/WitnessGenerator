@@ -1,24 +1,10 @@
 class PathDisplay {
 	constructor() {
-		this.currently_drawing_path = false;
 		this.start_node_overlay = null;
 		this.path_objects = [];
-		this.directions_moved = [];
-		this.path_head_is_node = true;
-		this.mouse_tracker = null;
-	}
-
-	last_direction_moved() {
-		if (this.directions_moved.length == 0) {
-			return null;
-		}
-		return this.directions_moved[this.directions_moved.length - 1];
 	}
 
 	start_drawing(start_node_graphics_object) {
-		this.currently_drawing_path = true;
-		this.path_head_is_node = true;
-
 		// Create shrunken version of the filled start node so we can expand it
 		var center_x = start_node_graphics_object.getAttributeNS(null, 'cx');
 		var center_y = start_node_graphics_object.getAttributeNS(null, 'cy');
@@ -51,50 +37,34 @@ class PathDisplay {
 
 		path_display.start_node_overlay = null;
 		path_display.path_objects = [];
-		path_display.directions_moved = [];
-		puzzle.reset_path();
-
-		path_display.currently_drawing_path = false;
 	}
 
 	move_forward_to(traversible, direction_moved) {
-		// Move the path in the specified direction
-		this.directions_moved.push(direction_moved);
-		this.path_head_is_node = !this.path_head_is_node;
-		puzzle.set_traversed(traversible);
-
 		// Clone graphics object of traversible and paint with path color
 		// TODO: This will need to be interpolated instead of immediately filled
 		var old_rect = puzzle.get_head_of_path().graphics_object;
 		var path_edge = clone_svg_node(old_rect);
 		path_edge.setAttributeNS(null, 'fill', cfg.path_color);
 		this.path_objects.push(path_edge);
-
-		// Check if the puzzle was completed
-		if (this.path_head_is_node && traversible.node_type == NODE_TYPE.END) {
-			if (puzzle.is_path_valid()) {
-				// Change color of entire path
-				this.path_objects.forEach((path_object) => {
-					path_object.setAttributeNS(null, 'fill', cfg.solution_color)
-				});
-				path_display.start_node_overlay.setAttributeNS(null, 'fill', cfg.solution_color);
-				puzzle.on_solve();
-			}
-		}
 	}
 
 	move_backwards() {
-		this.directions_moved.pop();
 		svg.removeChild(this.path_objects.pop());
-		this.path_head_is_node = !this.path_head_is_node;
-		puzzle.remove_head_of_path();
+	}
+
+	on_solve() {
+		// Change color of entire path
+		this.path_objects.forEach((path_object) => {
+			path_object.setAttributeNS(null, 'fill', cfg.solution_color)
+		});
+		path_display.start_node_overlay.setAttributeNS(null, 'fill', cfg.solution_color);
 	}
 }
 var path_display = new PathDisplay();
 
 function on_attempted_full_step(direction) {
 	if(on_attempted_move(direction)) {
-		if (!path_display.path_head_is_node) {
+		if (!path_head_is_node) {
 			on_attempted_move(direction);
 		}
 	}
@@ -109,12 +79,12 @@ function on_attempted_move(direction) {
 	var path_head = puzzle.get_head_of_path();
 	var new_path_object;
 
-	if (flip_direction(direction) == path_display.last_direction_moved()) {
-		path_display.move_backwards();
+	if (flip_direction(direction) == last_direction_moved()) {
+		move_backwards();
 		return true;
 	}
 
-	if (path_display.path_head_is_node) {
+	if (path_head_is_node) {
 		var new_edge = path_head.get_edge(direction);
 		if (!new_edge.is_traversible()) {
 			return false;
@@ -130,15 +100,40 @@ function on_attempted_move(direction) {
 		}
 	}
 
+	// Move the path in the specified direction
+	directions_moved.push(direction);
+	path_head_is_node = !path_head_is_node;
+	puzzle.set_traversed(new_path_object);
+
+	// Draw path moving forward
 	path_display.move_forward_to(new_path_object, direction);
+
+	// Check if the puzzle was completed
+	if (path_head_is_node && new_path_object.node_type == NODE_TYPE.END) {
+		if (puzzle.is_path_valid()) {
+			path_display.on_solve();
+			puzzle.on_solve();
+		}
+	}
+
 	return true;
+}
+
+function move_backwards() {
+	path_display.move_backwards();
+	directions_moved.pop();
+	path_head_is_node = !path_head_is_node;
+	puzzle.remove_head_of_path();
 }
 
 // Begin drawing path
 function on_click_start_node(start_node_graphics_object) {
-	if (path_display.currently_drawing_path) {
+	if (currently_drawing_path) {
 		return;
 	}
+
+	currently_drawing_path = true;
+	path_head_is_node = true;
 
 	path_display.start_drawing(start_node_graphics_object)
 	puzzle.set_traversed(puzzle.start_node);
@@ -151,7 +146,7 @@ function on_click_start_node(start_node_graphics_object) {
 
 // Stop drawing path
 function on_stop_drawing() {
-	if (!path_display.currently_drawing_path) {
+	if (!currently_drawing_path) {
 		return;
 	}
 
@@ -162,4 +157,21 @@ function on_stop_drawing() {
 
 	// Tell the path draw to stop drawing
 	path_display.stop_drawing();
+
+	reset_path();
+	puzzle.reset_path();
+}
+
+function reset_path() {
+	currently_drawing_path = false;
+	directions_moved = [];
+	path_head_is_node = true; // Always start at the start node
+}
+reset_path(); // Initialize these variables immediately
+
+function last_direction_moved() {
+	if (directions_moved.length == 0) {
+		return null;
+	}
+	return directions_moved[directions_moved.length - 1];
 }
