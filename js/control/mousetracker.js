@@ -3,12 +3,12 @@ class MouseTracker { // Disposable
 		this.previous_x;
 		this.previous_y;
 		this.movement_buffer = [];
-		document.onmousemove = this.on_mouse_move;
+		document.onmousemove = () => this.on_mouse_move(this);
 		document.body.requestPointerLock();
 	};
 
 	on_mouse_move() {
-		if (mouse_tracker.previous_x != undefined) {
+		if (this.previous_x != undefined) {
 			var delta_x =	event.movementX			||
 							event.mozMovementX		||
 							event.webkitMovementX	||
@@ -38,18 +38,18 @@ class MouseTracker { // Disposable
 				}
 			}
 
-			mouse_tracker.on_mouse_move_toward(direction);
+			this.on_mouse_move_toward(direction);
 		}
 
-		mouse_tracker.previous_x = event.pageX;
-		mouse_tracker.previous_y = event.pageY;
+		this.previous_x = event.pageX;
+		this.previous_y = event.pageY;
 	}
 
 	on_mouse_move_toward(direction) {
-		var movement_buffer = mouse_tracker.movement_buffer;
+		var movement_buffer = this.movement_buffer;
 		for (var i=0; i<movement_buffer.length; i++) {
 			if (movement_buffer[i] != direction) {
-				mouse_tracker.movement_buffer = [];
+				this.movement_buffer = [];
 				return false;
 			}
 		}
@@ -58,7 +58,7 @@ class MouseTracker { // Disposable
 		if (movement_buffer.length < 5) {
 			return false;
 		}
-		mouse_tracker.movement_buffer = [];
+		this.movement_buffer = [];
 		return on_attempted_move(direction);
 	}
 
