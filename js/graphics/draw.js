@@ -1,7 +1,7 @@
 // Prepares the DOM for adding elements to an SVG element
-function init_graphics(draw_config) {
-	cfg = draw_config;
+function init_graphics() {
 	svg = append_svg_node(document.body, "svg");
+	return svg;
 }
 
 // After calling initGraphics(), can be used to add an SVG element and return it

@@ -15,7 +15,7 @@ class PathDisplay { // Disposable
 	// Creates the visual effect of the start node increasing in radius
 	expand_start_node() {
 		var prev_radius = parseInt(path_display.start_node_overlay.getAttributeNS(null, 'r'));
-		var new_radius = prev_radius + 1;
+		var new_radius = prev_radius + cfg.start_node_radius/20;
 	
 		if (new_radius >= cfg.start_node_radius) {
 			clearInterval(this.expand_start_node_timer);

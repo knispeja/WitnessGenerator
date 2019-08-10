@@ -22,17 +22,18 @@ window.onload = async function() {
 		// Don't put the seed in the URL, prevents the same puzzle from regenerating
 		prevent_url_seed = !final_puzzle;
 
-		// Create a puzzle draw configuration 
+		// Create puzzle configurations
+		var puzzle_gen_config = new PuzzleGenerationConfiguration(); 
 		if (puzzle_color === undefined) {
-			var draw_config = new PuzzleDrawConfiguration();
+			init_graphics();
+			var draw_config = new PuzzleDrawConfiguration(puzzle_gen_config);
 			puzzle_color = draw_config.color;
-			init_graphics(draw_config);
+			cfg = draw_config;
 		}
 		else {
-			init_graphics(new PuzzleDrawConfiguration(puzzle_color));
+			init_graphics();
+			cfg = new PuzzleDrawConfiguration(puzzle_gen_config, puzzle_color);
 		}
-
-		var puzzle_gen_config = new PuzzleGenerationConfiguration();
 
 		// Generate puzzle, time how long it takes if needed
 		if (GENERATION_SPEED_TEST || DEBUG) {

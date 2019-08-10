@@ -9,7 +9,7 @@ if (!is_christmas) {
 var is_holiday = is_christmas || is_halloween;
 
 class PuzzleDrawConfiguration {
-	constructor(color) {
+	constructor(generation_cfg, color) {
 		// Christmas color scheme
 		if (is_christmas) {
 			this.color = '#2F9713';
@@ -48,8 +48,13 @@ class PuzzleDrawConfiguration {
 		// For reference by shapes that need to "erase" others with the background color
 		this.background_color = window.getComputedStyle(document.body, null).getPropertyValue('background-color');
 
+		// Get the bounding box of the SVG element to size
+		var rect = svg.getBoundingClientRect();
+		var smallest_dimension_of_svg = Math.min(rect.height, rect.width);
+		var largest_dimension_of_puzzle = Math.max(generation_cfg.height_in_cells, generation_cfg.width_in_cells);
+
 		// Length and thickness of an edge between two nodes
-		this.edge_spacing = 100;
+		this.edge_spacing = smallest_dimension_of_svg / largest_dimension_of_puzzle;
 		this.edge_thickness = this.edge_spacing / 4;
 
 		// Size of the gap placed in an edge for an obstacle
