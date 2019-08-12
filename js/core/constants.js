@@ -4,7 +4,6 @@ const GENERATION_TIME_MAX_MS = 1000;
 
 const FORCE_SQUARE_PUZZLES = true;
 const TIMES_TO_REGENERATE = 15; // 0 turns off regeneration effect
-const PUZZLE_COLORS = ['#B1F514', '#F39C12', '#8E44AD', '#F1C40F', '#3498DB', '#34495E', '#E74C3C'];
 
 const DIRECTION =
 {

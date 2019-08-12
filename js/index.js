@@ -1,6 +1,6 @@
 window.onload = async function() {
 	url_params = getJsonFromUrl();
-	var regenerations = 0;
+	cfg = loadUninitializedPuzzleDrawConfig();
 
 	// Variables for speed test
 	if (DEBUG || GENERATION_SPEED_TEST) {
@@ -10,8 +10,8 @@ window.onload = async function() {
 	}
 
 	// Loop to regenerate puzzles for a visual effect if no seed is passed
-	var puzzle_color;
 	var seeded = url_params.seed !== undefined;
+	var regenerations = 0;
 	while (true) {
 		// Is this the last puzzle to generate?
 		var final_puzzle = regenerations++ >= TIMES_TO_REGENERATE || seeded;
@@ -22,20 +22,11 @@ window.onload = async function() {
 		// Don't put the seed in the URL, prevents the same puzzle from regenerating
 		prevent_url_seed = !final_puzzle;
 
-		// Create puzzle configurations
-		var puzzle_gen_config = new PuzzleGenerationConfiguration(); 
-		if (puzzle_color === undefined) {
-			init_graphics();
-			var draw_config = new PuzzleDrawConfiguration(puzzle_gen_config);
-			puzzle_color = draw_config.color;
-			cfg = draw_config;
-		}
-		else {
-			init_graphics();
-			cfg = new PuzzleDrawConfiguration(puzzle_gen_config, puzzle_color);
-		}
-
 		// Generate puzzle, time how long it takes if needed
+		var puzzle_gen_config = new PuzzleGenerationConfiguration();
+		init_graphics();
+		cfg.initialize(puzzle_gen_config);
+		
 		if (GENERATION_SPEED_TEST || DEBUG) {
 			var start = window.performance.now();
 		}

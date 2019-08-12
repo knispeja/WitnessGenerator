@@ -232,8 +232,7 @@ class Puzzle {
 	}
 
 	generate_colored_squares() {
-		var black_white_mode = true;
-		var cell_color = black_white_mode ? CELL_COLOR.WHITE : CELL_COLOR.START_HUES;
+		var cell_color = this.puzzle_gen_config.black_white_mode ? CELL_COLOR.WHITE : CELL_COLOR.START_HUES;
 		var regions_with_squares = 0;
 		this.regions.forEach(function (region) {
 			var squares_generated_in_region = 0;
@@ -287,7 +286,7 @@ class Puzzle {
 					cell.cell_type = CELL_TYPE.SQUARE;
 				}
 			}, this);
-			if (black_white_mode) {
+			if (this.puzzle_gen_config.black_white_mode) {
 				cell_color = (cell_color == CELL_COLOR.WHITE) ? CELL_COLOR.BLACK : CELL_COLOR.WHITE;
 			}
 			else if (++cell_color >= CELL_COLORS.length) {

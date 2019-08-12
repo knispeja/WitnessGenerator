@@ -24,5 +24,8 @@ class PuzzleGenerationConfiguration {
         this.disable_obstacles = !stringToBoolean(url_params.obstacles, true);
         this.disable_colored_squares = !stringToBoolean(url_params.squares, true);
         this.disable_extra_end_nodes = !stringToBoolean(url_params.extraterminals, true);
+        
+        // Dictates whether the colored squares will be in more than two colors
+        this.black_white_mode = true;
     }
 }
