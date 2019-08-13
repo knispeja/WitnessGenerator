@@ -21,6 +21,7 @@ function draw_hexagon(center_x, center_y) {
 	append_svg_node(svg, 'polygon', { class: 'hex', points: hex_points, fill: cfg.pellet_color });
 }
 
+// Currently always of radius cfg.edge_thickness
 function draw_quarter_circle(corner_join_x, corner_join_y, vertical_direction, horizontal_direction) {
 	var arc_dx = horizontal_direction == DIRECTION.WEST ? -cfg.edge_thickness : cfg.edge_thickness;
 	var arc_dy = vertical_direction == DIRECTION.NORTH ? -cfg.edge_thickness : cfg.edge_thickness;
@@ -38,5 +39,34 @@ function draw_quarter_circle(corner_join_x, corner_join_y, vertical_direction, h
 	var arc = `a${cfg.edge_thickness} ${cfg.edge_thickness} 0 0 ${sweep_flag} ${-arc_dx} ${arc_dy}`;
 	var fill_corner = `l 0 ${post_move} z`;
 
-	return append_svg_node(svg, 'path', { d: `${move_to_corner} ${arc} ${fill_corner}`, fill: cfg.color});
+	return append_svg_node(svg, 'path', {d: `${move_to_corner} ${arc} ${fill_corner}`, fill: cfg.color});
 }
+
+function draw_quarter_circle(center_x, center_y, radius, direction) {
+	var half_circle_is_vertical = is_vertical(direction);
+
+	var arc_dx = half_circle_is_vertical ? -radius : 0;
+	var arc_dy = half_circle_is_vertical ? 0 : -radius;
+
+	var sweep_flag = (direction == DIRECTION.NORTH || direction == DIRECTION.EAST) ? 1 : 0;
+
+	var move_to_corner = `M${center_x + arc_dx} ${center_y + arc_dy}`;
+	var arc = `a${radius} ${radius} 0 0 ${sweep_flag} ${-arc_dx * 2} ${-arc_dy * 2} z`;
+
+	return append_svg_node(svg, 'path', {d: `${move_to_corner} ${arc}`, fill: 'white'});
+}
+
+// Draws a half circle with two quarter circles, not ideal
+/*
+function draw_half_circle(corner_join_x, corner_join_y, direction) {
+	var half_circle_is_vertical = is_vertical(direction);
+	var horizontal_directions = half_circle_is_vertical ? HORIZONTAL_DIRECTIONS : [direction];
+	var vertical_directions = half_circle_is_vertical ? [direction] : VERTICAL_DIRECTIONS;
+
+	// Should always draw exactly two quarter circles to make a half circle
+	for (var horz_i=0; horz_i<horizontal_directions.length; horz_i++) {
+		for (var vert_i=0; vert_i<vertical_directions.length; vert_i++) {
+			draw_quarter_circle(corner_join_x, corner_join_y, vertical_directions[vert_i], horizontal_directions[horz_i]);
+		}
+	}
+}*/

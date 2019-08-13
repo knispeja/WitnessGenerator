@@ -13,6 +13,18 @@ const DIRECTION =
 	'WEST': 3
 };
 
+const VERTICAL_DIRECTIONS =
+[
+	DIRECTION.NORTH,
+	DIRECTION.SOUTH
+];
+
+const HORIZONTAL_DIRECTIONS =
+[
+	DIRECTION.EAST,
+	DIRECTION.WEST
+];
+
 const NODE_TYPE =
 {
 	'NORMAL': 0,
@@ -55,7 +67,7 @@ const CELL_COLOR =
 };
 
 function is_vertical(direction) {
-	return direction == DIRECTION.NORTH || direction == DIRECTION.SOUTH;
+	return VERTICAL_DIRECTIONS.includes(direction);
 }
 
 function flip_direction(direction) {
