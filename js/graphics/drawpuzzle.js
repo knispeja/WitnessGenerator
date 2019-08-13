@@ -67,11 +67,11 @@ function draw_edges(node) {
 			var vertical_direction;
 			if (node.south.edge_type == EDGE_TYPE.BORDER) {
 				vertical_direction = DIRECTION.SOUTH;
-				node.graphics_object = draw_quarter_circle(x, y, vertical_direction, DIRECTION.EAST);
+				node.graphics_object = draw_quarter_circle(x, y, cfg.edge_thickness, vertical_direction, DIRECTION.EAST);
 			}
 			else {
 				vertical_direction = DIRECTION.NORTH;
-				node.graphics_object = draw_quarter_circle(x, y + cfg.edge_thickness, vertical_direction, DIRECTION.EAST);
+				node.graphics_object = draw_quarter_circle(x, y + cfg.edge_thickness, cfg.edge_thickness, vertical_direction, DIRECTION.EAST);
 			}
 		
 			if (node.node_type == NODE_TYPE.END) {
@@ -106,11 +106,11 @@ function draw_edges(node) {
 			var vertical_direction;
 			if (west_node.south.edge_type == EDGE_TYPE.BORDER) {
 				vertical_direction = DIRECTION.SOUTH;
-				west_node.graphics_object = draw_quarter_circle(west_corner_x, y, vertical_direction, DIRECTION.WEST);
+				west_node.graphics_object = draw_quarter_circle(west_corner_x, y, cfg.edge_thickness, vertical_direction, DIRECTION.WEST);
 			}
 			else {
 				vertical_direction = DIRECTION.NORTH;
-				west_node.graphics_object = draw_quarter_circle(west_corner_x, y + cfg.edge_thickness, vertical_direction, DIRECTION.WEST);
+				west_node.graphics_object = draw_quarter_circle(west_corner_x, y + cfg.edge_thickness, cfg.edge_thickness, vertical_direction, DIRECTION.WEST);
 			}
 
 			// Draw corner end node

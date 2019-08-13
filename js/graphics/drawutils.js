@@ -21,12 +21,11 @@ function draw_hexagon(center_x, center_y) {
 	append_svg_node(svg, 'polygon', { class: 'hex', points: hex_points, fill: cfg.pellet_color });
 }
 
-// Currently always of radius cfg.edge_thickness
-function draw_quarter_circle(corner_join_x, corner_join_y, vertical_direction, horizontal_direction) {
-	var arc_dx = horizontal_direction == DIRECTION.WEST ? -cfg.edge_thickness : cfg.edge_thickness;
-	var arc_dy = vertical_direction == DIRECTION.NORTH ? -cfg.edge_thickness : cfg.edge_thickness;
+function draw_quarter_circle(center_x, center_y, radius, vertical_direction, horizontal_direction) {
+	var arc_dx = horizontal_direction == DIRECTION.WEST ? -radius : radius;
+	var arc_dy = vertical_direction == DIRECTION.NORTH ? -radius : radius;
 	var sweep_flag = horizontal_direction == DIRECTION.WEST ? 0 : 1;
-	var post_move = cfg.edge_thickness * (vertical_direction == DIRECTION.NORTH ? 1 : -1);
+	var post_move = radius * (vertical_direction == DIRECTION.NORTH ? 1 : -1);
 
 	var sweep_flag = 0;
 	if (horizontal_direction == DIRECTION.EAST && vertical_direction == DIRECTION.SOUTH) {
@@ -35,14 +34,14 @@ function draw_quarter_circle(corner_join_x, corner_join_y, vertical_direction, h
 		sweep_flag = 1;
 	}
 
-	var move_to_corner = `M${corner_join_x + arc_dx} ${corner_join_y}`;
-	var arc = `a${cfg.edge_thickness} ${cfg.edge_thickness} 0 0 ${sweep_flag} ${-arc_dx} ${arc_dy}`;
+	var move_to_corner = `M${center_x + arc_dx} ${center_y}`;
+	var arc = `a${radius} ${radius} 0 0 ${sweep_flag} ${-arc_dx} ${arc_dy}`;
 	var fill_corner = `l 0 ${post_move} z`;
 
 	return append_svg_node(svg, 'path', {d: `${move_to_corner} ${arc} ${fill_corner}`, fill: cfg.color});
 }
 
-function draw_quarter_circle(center_x, center_y, radius, direction) {
+function draw_half_circle(center_x, center_y, radius, direction) {
 	var half_circle_is_vertical = is_vertical(direction);
 
 	var arc_dx = half_circle_is_vertical ? -radius : 0;
