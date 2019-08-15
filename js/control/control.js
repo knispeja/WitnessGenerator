@@ -9,12 +9,14 @@ function on_attempted_full_step(direction) {
 function on_attempted_move(direction) {
 	if (puzzle.path.length == 0) {
 		path_display.stop_drawing();
-		return;
+		return false;
 	}
 
 	var path_head = puzzle.get_head_of_path();
-	var new_path_object;
 
+	// TODO check if we're actually trying to step forward
+
+	var new_path_object;
 	if (flip_direction(direction) == last_direction_moved()) {
 		move_backwards();
 		return true;

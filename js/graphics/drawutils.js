@@ -54,18 +54,3 @@ function draw_half_circle(center_x, center_y, radius, direction) {
 
 	return append_svg_node(svg, 'path', {d: `${move_to_corner} ${arc}`, fill: 'white'});
 }
-
-// Draws a half circle with two quarter circles, not ideal
-/*
-function draw_half_circle(corner_join_x, corner_join_y, direction) {
-	var half_circle_is_vertical = is_vertical(direction);
-	var horizontal_directions = half_circle_is_vertical ? HORIZONTAL_DIRECTIONS : [direction];
-	var vertical_directions = half_circle_is_vertical ? [direction] : VERTICAL_DIRECTIONS;
-
-	// Should always draw exactly two quarter circles to make a half circle
-	for (var horz_i=0; horz_i<horizontal_directions.length; horz_i++) {
-		for (var vert_i=0; vert_i<vertical_directions.length; vert_i++) {
-			draw_quarter_circle(corner_join_x, corner_join_y, vertical_directions[vert_i], horizontal_directions[horz_i]);
-		}
-	}
-}*/
