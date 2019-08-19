@@ -36,7 +36,7 @@ class PathDisplay { // Disposable
 		var subpixel_sign = (direction == DIRECTION.EAST || direction == DIRECTION.SOUTH) ? 1 : -1;
 		var pixel_delta = subpixel_sign * pixels;
 
-		var max_length = cfg.edge_spacing;
+		var max_length = cfg.edge_spacing - cfg.edge_thickness;
 		var new_length = (edge_path_length_current + pixel_delta) * subpixel_sign;
 		
 		var overflow = false;
@@ -126,7 +126,6 @@ class PathDisplay { // Disposable
 
 	move_forward_to() {
 		// Clone graphics object of traversible and paint with path color
-		// TODO: This will need to be interpolated instead of immediately filled
 		var old_rect = puzzle.get_head_of_path().graphics_object;
 		var path_edge = clone_svg_node(old_rect);
 		path_edge.setAttributeNS(null, 'fill', cfg.path_color);
