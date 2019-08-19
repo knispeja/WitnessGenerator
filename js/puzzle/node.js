@@ -64,6 +64,21 @@ class Node {
 		}
 	}
 
+	get_direction_of_edge(edge) {
+		switch (edge) {
+			case this.north:
+				return DIRECTION.NORTH;
+			case this.east:
+				return DIRECTION.EAST;
+			case this.south:
+				return DIRECTION.SOUTH;
+			case this.west:
+				return DIRECTION.WEST;
+			default:
+				throw "Edge passed to get_direction_of_edge() not an edge of the given node";
+		}
+	}
+
 	get_connected_node(direction) {
 		var edge = this.get_edge(direction);
 		if (edge.edge_type == EDGE_TYPE.BORDER) {

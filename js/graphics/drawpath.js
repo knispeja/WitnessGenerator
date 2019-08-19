@@ -2,9 +2,6 @@ class PathDisplay { // Disposable
 	constructor(start_node_graphics_object) {
 		this.path_objects = [];
 
-		// Always positive or 0
-		this.edge_subpixel = 0;
-
 		// Create shrunken version of the filled start node so we can expand it
 		var center_x = start_node_graphics_object.getAttributeNS(null, 'cx');
 		var center_y = start_node_graphics_object.getAttributeNS(null, 'cy');
@@ -31,14 +28,10 @@ class PathDisplay { // Disposable
 	// Assumes path head is an edge
 	// Returns boolean: whether or not the pixels send the movement over a step
 	move_edge_pixels_forward_if_no_step(pixels, direction) {
-		var graphics_head = this.graphics_objects[this.graphics_objects.length];
-		if (graphics_head.is_vertical != is_vertical(direction)) {
-			throw "Tried to move an invalid direction on the current edge";
-		}
-
-		var length_prop = graphics_head.is_vertical ? 'height' : 'width';
-		var origin_prop = graphics_head.is_vertical ? 'y' : 'x';
-		var edge_path_length_current = graphics_head.getAttributeNS(null, length_prop);
+		var graphics_head = this.path_objects[this.path_objects.length - 1];
+		var dir_is_vertical = is_vertical(direction);
+		var length_prop = dir_is_vertical ? 'height' : 'width';
+		var edge_path_length_current = parseInt(graphics_head.getAttributeNS(null, length_prop));
 		
 		var subpixel_sign = (direction == DIRECTION.EAST || direction == DIRECTION.SOUTH) ? 1 : -1;
 		var pixel_delta = subpixel_sign * pixels;
@@ -47,18 +40,28 @@ class PathDisplay { // Disposable
 		var new_length = (edge_path_length_current + pixel_delta) * subpixel_sign;
 		
 		var overflow = false;
-		if (new_length >= max_length) {
+		if (new_length >= max_length || new_length <= 0) {
 			overflow = true;
-			pixel_delta = (max_length - new_length) * subpixel_sign;
 			new_length = max_length;
 		}
 
-		var should_move_origin = (subpixel_sign == 1) ? false : true;
-		if (should_move_origin) {
-
-		}
+		this.set_edge_length(graphics_head, direction, new_length);
 
 		return overflow;
+	}
+
+	set_edge_length(edge, direction, new_length) {
+		var length_prop = is_vertical(direction) ? 'height' : 'width';
+		var old_length = parseInt(edge.getAttributeNS(null, length_prop));
+		var pixel_delta = new_length - old_length;
+
+		var should_move_origin = (direction == DIRECTION.WEST || direction == DIRECTION.NORTH);
+		if (should_move_origin) {
+			var origin_prop = is_vertical ? 'y' : 'x';
+			var old_origin = parseInt(edge.getAttributeNS(null, origin_prop));
+			edge.setAttributeNS(null, origin_prop, old_origin + pixel_delta);
+		}
+		edge.setAttributeNS(null, length_prop, new_length);
 	}
 
 	pixel_step_forward(pixels, direction) {
@@ -127,7 +130,13 @@ class PathDisplay { // Disposable
 		var old_rect = puzzle.get_head_of_path().graphics_object;
 		var path_edge = clone_svg_node(old_rect);
 		path_edge.setAttributeNS(null, 'fill', cfg.path_color);
-		this.edge_subpixel = 0;
+		if (!path_head_is_node) {
+			var old_path_node = puzzle.path[puzzle.path.length - 2];
+			var new_path_edge = puzzle.get_head_of_path();
+			var direction = old_path_node.get_direction_of_edge(new_path_edge);
+			this.set_edge_length(path_edge, direction, 1);
+		}
+
 		this.path_objects.push(path_edge);
 	}
 

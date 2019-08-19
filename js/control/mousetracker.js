@@ -20,8 +20,10 @@ class MouseTracker { // Disposable
 			var delta_x_mag = Math.abs(delta_x);
 			var delta_y_mag = Math.abs(delta_y);
 
+			var pixels;
 			var direction;
 			if (delta_x_mag > delta_y_mag) {
+				pixels = delta_x;
 				if (delta_x > 0) {
 					direction = DIRECTION.EAST;
 				}
@@ -30,6 +32,7 @@ class MouseTracker { // Disposable
 				}
 			}
 			else {
+				pixels = delta_y;
 				if (delta_y > 0) {
 					direction = DIRECTION.SOUTH;
 				}
@@ -38,14 +41,14 @@ class MouseTracker { // Disposable
 				}
 			}
 
-			this.on_mouse_move_toward(direction);
+			this.on_mouse_move_toward(pixels, direction);
 		}
 
 		this.previous_x = event.pageX;
 		this.previous_y = event.pageY;
 	}
 
-	on_mouse_move_toward(direction) {
+	on_mouse_move_toward(pixels, direction) {
 		var movement_buffer = this.movement_buffer;
 		for (var i=0; i<movement_buffer.length; i++) {
 			if (movement_buffer[i] != direction) {
@@ -59,7 +62,7 @@ class MouseTracker { // Disposable
 			return false;
 		}
 		this.movement_buffer = [];
-		return on_attempted_move(direction);
+		return on_attempted_move(pixels, direction);
 	}
 
 	dispose() {

@@ -1,20 +1,15 @@
-function on_attempted_full_step(direction) {
-	if (on_attempted_move(direction)) {
-		if (!path_head_is_node) {
-			on_attempted_move(direction);
-		}
-	}
-}
-
-function on_attempted_move(direction) {
+function on_attempted_move(pixels, direction) {
 	if (puzzle.path.length == 0) {
 		path_display.stop_drawing();
 		return false;
 	}
 
 	var path_head = puzzle.get_head_of_path();
-
-	// TODO check if we're actually trying to step forward
+	if (!path_head_is_node) {
+		if (!path_display.move_edge_pixels_forward_if_no_step(pixels, direction)) {
+			return true;
+		}
+	}
 
 	var new_path_object;
 	if (flip_direction(direction) == last_direction_moved()) {

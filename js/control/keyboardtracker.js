@@ -4,11 +4,12 @@ class KeyboardTracker { // Disposable
     }
 
     on_key_press(e) {
+		var move_dist = 1;
 		switch (e.keyCode) {
-			case 37: return on_attempted_full_step(DIRECTION.WEST);
-			case 38: return on_attempted_full_step(DIRECTION.NORTH);
-			case 39: return on_attempted_full_step(DIRECTION.EAST);
-			case 40: return on_attempted_full_step(DIRECTION.SOUTH);
+			case 37: return on_attempted_move(move_dist, DIRECTION.WEST);
+			case 38: return on_attempted_move(move_dist, DIRECTION.NORTH);
+			case 39: return on_attempted_move(move_dist, DIRECTION.EAST);
+			case 40: return on_attempted_move(move_dist, DIRECTION.SOUTH);
 			
 			case 8:  // Backspace
 			case 13: // Enter
