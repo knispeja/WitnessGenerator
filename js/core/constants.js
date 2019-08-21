@@ -5,6 +5,13 @@ const GENERATION_TIME_MAX_MS = 1000;
 const FORCE_SQUARE_PUZZLES = true;
 const TIMES_TO_REGENERATE = 15; // 0 turns off regeneration effect
 
+// How many inputs in one direction are needed to move in that direction
+// Higher values make mouse movement easier, but can cause visual stuttering
+const MOUSE_MOVEMENT_BUFFER_SIZE = 2; // 1 turns off mouse movement buffering
+
+// Interpret attempts at invalid movement into valid moves
+const INTERPRETIVE_MOVEMENT = true;
+
 const DIRECTION =
 {
 	'NORTH': 0,

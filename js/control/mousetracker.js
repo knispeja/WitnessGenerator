@@ -63,7 +63,7 @@ class MouseTracker { // Disposable
 		}
 
 		movement_buffer.push(direction);
-		if (movement_buffer.length < 5) {
+		if (movement_buffer.length < MOUSE_MOVEMENT_BUFFER_SIZE) {
 			return false;
 		}
 		this.movement_buffer = [];

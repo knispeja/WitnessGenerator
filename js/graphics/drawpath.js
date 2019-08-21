@@ -25,8 +25,23 @@ class PathDisplay { // Disposable
 		this.start_node_overlay.setAttributeNS(null, 'r', new_radius);
 	}
 
-	move_edge_pixels_backward_if_no_step(pixels, direction, ) {
-		return this.move_edge_pixels_forward_if_no_step(pixels, flip_direction(direction), false);
+	move_edge_pixels_towards_nearest_node(pixels) {
+		var last_direction_is_vertical = is_vertical(last_direction_moved());
+		var graphics_head = this.path_objects[this.path_objects.length - 1];
+		var length_prop = last_direction_is_vertical ? 'height' : 'width';
+		var edge_path_length_current = parseFloat(graphics_head.getAttributeNS(null, length_prop));
+		var cutoff_length = (cfg.edge_spacing - cfg.edge_thickness) / 2;
+
+		if (edge_path_length_current < cutoff_length) {
+			return on_attempted_move(pixels, flip_direction(last_direction_moved()));
+		}
+		else {
+			return on_attempted_move(pixels, last_direction_moved());
+		}
+	}
+
+	move_edge_pixels_backward_if_no_step(pixels, direction) {
+		return this.move_edge_pixels_forward_if_no_step(-pixels, flip_direction(direction), false);
 	}
 
 	// Assumes path head is an edge, and we are moving forwards

@@ -11,7 +11,7 @@ function on_attempted_move(pixels, direction) {
 		if (path_head_is_node) {
 			move_backwards();
 		}
-		else if (path_display.move_edge_pixels_backward_if_no_step(-pixels, direction)) {
+		else if (path_display.move_edge_pixels_backward_if_no_step(pixels, direction)) {
 			move_backwards();
 		}
 
@@ -26,6 +26,9 @@ function on_attempted_move(pixels, direction) {
 		new_path_object = new_edge;
 	} else {
 		if (is_vertical(direction) != path_head.is_vertical) {
+			if (INTERPRETIVE_MOVEMENT) {
+				return path_display.move_edge_pixels_towards_nearest_node(pixels);
+			}
 			return false;
 		}
 
