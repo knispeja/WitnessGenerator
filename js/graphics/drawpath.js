@@ -25,19 +25,16 @@ class PathDisplay { // Disposable
 		this.start_node_overlay.setAttributeNS(null, 'r', new_radius);
 	}
 
-	// Assumes path head is an edge
+	// Assumes path head is an edge, and we are moving forwards
 	// Returns boolean: whether or not the pixels send the movement over a step
 	move_edge_pixels_forward_if_no_step(pixels, direction) {
 		var graphics_head = this.path_objects[this.path_objects.length - 1];
 		var dir_is_vertical = is_vertical(direction);
 		var length_prop = dir_is_vertical ? 'height' : 'width';
 		var edge_path_length_current = parseInt(graphics_head.getAttributeNS(null, length_prop));
-		
-		var subpixel_sign = (direction == DIRECTION.EAST || direction == DIRECTION.SOUTH) ? 1 : -1;
-		var pixel_delta = subpixel_sign * pixels;
 
 		var max_length = cfg.edge_spacing - cfg.edge_thickness;
-		var new_length = (edge_path_length_current + pixel_delta) * subpixel_sign;
+		var new_length = edge_path_length_current + pixels;
 		
 		var overflow = false;
 		if (new_length >= max_length || new_length <= 0) {
@@ -51,77 +48,17 @@ class PathDisplay { // Disposable
 	}
 
 	set_edge_length(edge, direction, new_length) {
-		var length_prop = is_vertical(direction) ? 'height' : 'width';
-		var old_length = parseInt(edge.getAttributeNS(null, length_prop));
-		var pixel_delta = new_length - old_length;
+		var is_direction_vertical = is_vertical(direction);
+		var length_prop = is_direction_vertical ? 'height' : 'width';
 
 		var should_move_origin = (direction == DIRECTION.WEST || direction == DIRECTION.NORTH);
 		if (should_move_origin) {
-			var origin_prop = is_vertical ? 'y' : 'x';
+			var origin_prop = is_direction_vertical ? 'y' : 'x';
 			var old_origin = parseInt(edge.getAttributeNS(null, origin_prop));
-			edge.setAttributeNS(null, origin_prop, old_origin + pixel_delta);
+			var old_length = parseInt(edge.getAttributeNS(null, length_prop));
+			edge.setAttributeNS(null, origin_prop, old_origin - (new_length - old_length));
 		}
 		edge.setAttributeNS(null, length_prop, new_length);
-	}
-
-	pixel_step_forward(pixels, direction) {
-		var is_direction_vertical = is_vertical(direction);
-		if (path_head_is_node && this.direction_moving !== undefined) {
-			if (is_vertical(this.direction_moving) != is_direction_vertical) {
-				this.x_subpixel = 0;
-				this.y_subpixel = 0;
-			}
-		}
-
-		var subpixel_sign = 1;
-		if (flip_direction(direction) == this.direction_moving) {
-			subpixel_sign = -1;
-		}
-		else {
-			this.direction_moving = direction;
-		}
-
-		var max_length = path_head_is_node ? cfg.edge_thickness : cfg.edge_spacing;
-		var pixel_delta = subpixel_sign * pixels;
-	
-		var rollover = false;
-		var props_to_bump = [];
-		if (is_direction_vertical) {
-			this.y_subpixel += pixel_delta;
-			if (this.y_subpixel > max_length) {
-				rollover = true;
-			}
-			else if (this.y_subpixel < 0) {
-				this.move_backwards();
-			}
-
-			if (direction == DIRECTION.NORTH) {
-				props_to_bump.push('y');
-			}
-			props_to_bump.push('height');
-		}
-		else {
-			this.x_subpixel += pixel_delta;
-			if (this.x_subpixel > max_length) {
-				rollover = true;
-			}
-			else if (this.x_subpixel < 0) {
-				this.move_backwards();
-			}
-
-			if (direction == DIRECTION.WEST) {
-				props_to_bump.push('x');
-			}
-			props_to_bump.push('width');
-		}
-
-		var graphics_head = this.graphics_objects[this.graphics_objects.length - 1];
-		props_to_bump.foreach((prop) => {
-			var prop_old = graphics_head.getAttributeNS(null, prop);
-			graphics_head.setAttributeNS(null, prop, prop_old + pixel_delta);
-		});
-
-		return false;
 	}
 
 	move_forward_to() {
@@ -131,9 +68,14 @@ class PathDisplay { // Disposable
 		path_edge.setAttributeNS(null, 'fill', cfg.path_color);
 		if (!path_head_is_node) {
 			var old_path_node = puzzle.path[puzzle.path.length - 2];
+			var new_edge_length = 1;
+			if (old_path_node.node_type == NODE_TYPE.START) {
+				new_edge_length = cfg.start_node_radius - cfg.edge_thickness/2;
+			}
+
 			var new_path_edge = puzzle.get_head_of_path();
 			var direction = old_path_node.get_direction_of_edge(new_path_edge);
-			this.set_edge_length(path_edge, direction, 1);
+			this.set_edge_length(path_edge, direction, new_edge_length);
 		}
 
 		this.path_objects.push(path_edge);
