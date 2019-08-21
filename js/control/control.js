@@ -1,4 +1,4 @@
-function on_attempted_move(pixels, direction) {
+function on_attempted_move(pixels, direction, recursion_safety) {
 	if (puzzle.path.length == 0) {
 		path_display.stop_drawing();
 		return false;
@@ -27,7 +27,7 @@ function on_attempted_move(pixels, direction) {
 	} else {
 		if (is_vertical(direction) != path_head.is_vertical) {
 			if (INTERPRETIVE_MOVEMENT) {
-				return path_display.move_edge_pixels_towards_nearest_node(pixels);
+				return path_display.move_edge_pixels_towards_nearest_node(pixels, recursion_safety);
 			}
 			return false;
 		}

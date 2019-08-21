@@ -25,18 +25,23 @@ class PathDisplay { // Disposable
 		this.start_node_overlay.setAttributeNS(null, 'r', new_radius);
 	}
 
-	move_edge_pixels_towards_nearest_node(pixels) {
+	move_edge_pixels_towards_nearest_node(pixels, recursion_safety) {
+		if (recursion_safety !== undefined) {
+			throw "Infinite recursion caused by move_edge_pixels_towards_nearest_node()";
+		}
+
 		var last_direction_is_vertical = is_vertical(last_direction_moved());
 		var graphics_head = this.path_objects[this.path_objects.length - 1];
 		var length_prop = last_direction_is_vertical ? 'height' : 'width';
 		var edge_path_length_current = parseFloat(graphics_head.getAttributeNS(null, length_prop));
 		var cutoff_length = (cfg.edge_spacing - cfg.edge_thickness) / 2;
 
+		pixels = INTERPRETED_MOVEMENT_MULTIPLIER * pixels;
 		if (edge_path_length_current < cutoff_length) {
-			return on_attempted_move(pixels, flip_direction(last_direction_moved()));
+			return on_attempted_move(pixels, flip_direction(last_direction_moved()), true);
 		}
 		else {
-			return on_attempted_move(pixels, last_direction_moved());
+			return on_attempted_move(pixels, last_direction_moved(), true);
 		}
 	}
 
