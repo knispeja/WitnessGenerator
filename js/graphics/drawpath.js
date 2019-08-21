@@ -14,7 +14,7 @@ class PathDisplay { // Disposable
 
 	// Creates the visual effect of the start node increasing in radius
 	expand_start_node() {
-		var prev_radius = parseInt(path_display.start_node_overlay.getAttributeNS(null, 'r'));
+		var prev_radius = parseFloat(path_display.start_node_overlay.getAttributeNS(null, 'r'));
 		var new_radius = prev_radius + cfg.start_node_radius/20;
 	
 		if (new_radius >= cfg.start_node_radius) {
@@ -35,7 +35,7 @@ class PathDisplay { // Disposable
 		var graphics_head = this.path_objects[this.path_objects.length - 1];
 		var dir_is_vertical = is_vertical(direction);
 		var length_prop = dir_is_vertical ? 'height' : 'width';
-		var edge_path_length_current = parseInt(graphics_head.getAttributeNS(null, length_prop));
+		var edge_path_length_current = parseFloat(graphics_head.getAttributeNS(null, length_prop));
 
 		var max_length = cfg.edge_spacing - cfg.edge_thickness;
 		if (is_obstacle) {
@@ -63,14 +63,10 @@ class PathDisplay { // Disposable
 		var should_move_origin = (direction == DIRECTION.WEST || direction == DIRECTION.NORTH);
 		if (should_move_origin) {
 			var origin_prop = is_direction_vertical ? 'y' : 'x';
-			var old_origin = parseInt(edge.getAttributeNS(null, origin_prop));
-			var old_length = parseInt(edge.getAttributeNS(null, length_prop));
-			var length_diff = new_length - old_length;
-			if (Math.abs(length_diff) < 1) {
-				return;
-			}
+			var old_origin = parseFloat(edge.getAttributeNS(null, origin_prop));
+			var old_length = parseFloat(edge.getAttributeNS(null, length_prop));
 
-			edge.setAttributeNS(null, origin_prop, old_origin - length_diff);
+			edge.setAttributeNS(null, origin_prop, old_origin - (new_length - old_length));
 		}
 		edge.setAttributeNS(null, length_prop, new_length);
 	}
