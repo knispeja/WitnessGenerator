@@ -4,7 +4,7 @@ class KeyboardTracker { // Disposable
     }
 
     on_key_press(e) {
-		var move_dist = 1;
+		const move_dist = 9;
 		switch (e.keyCode) {
 			case 37: return on_attempted_move(move_dist, DIRECTION.WEST);
 			case 38: return on_attempted_move(move_dist, DIRECTION.NORTH);

@@ -25,15 +25,24 @@ class PathDisplay { // Disposable
 		this.start_node_overlay.setAttributeNS(null, 'r', new_radius);
 	}
 
+	move_edge_pixels_backward_if_no_step(pixels, direction, ) {
+		return this.move_edge_pixels_forward_if_no_step(pixels, flip_direction(direction), false);
+	}
+
 	// Assumes path head is an edge, and we are moving forwards
 	// Returns boolean: whether or not the pixels send the movement over a step
-	move_edge_pixels_forward_if_no_step(pixels, direction) {
+	move_edge_pixels_forward_if_no_step(pixels, direction, is_obstacle) {
 		var graphics_head = this.path_objects[this.path_objects.length - 1];
 		var dir_is_vertical = is_vertical(direction);
 		var length_prop = dir_is_vertical ? 'height' : 'width';
 		var edge_path_length_current = parseInt(graphics_head.getAttributeNS(null, length_prop));
 
 		var max_length = cfg.edge_spacing - cfg.edge_thickness;
+		if (is_obstacle) {
+			max_length -= cfg.obstacle_gap_size;
+			max_length /= 2;
+		}
+
 		var new_length = edge_path_length_current + pixels;
 		
 		var overflow = false;
@@ -56,7 +65,12 @@ class PathDisplay { // Disposable
 			var origin_prop = is_direction_vertical ? 'y' : 'x';
 			var old_origin = parseInt(edge.getAttributeNS(null, origin_prop));
 			var old_length = parseInt(edge.getAttributeNS(null, length_prop));
-			edge.setAttributeNS(null, origin_prop, old_origin - (new_length - old_length));
+			var length_diff = new_length - old_length;
+			if (Math.abs(length_diff) < 1) {
+				return;
+			}
+
+			edge.setAttributeNS(null, origin_prop, old_origin - length_diff);
 		}
 		edge.setAttributeNS(null, length_prop, new_length);
 	}

@@ -10,6 +10,10 @@ class Edge {
 		this.graphics_object = null;
 	}
 
+	is_partially_traversible() {
+		return this.edge_type != EDGE_TYPE.BORDER && !this.traversed;
+	}
+
 	is_traversible() {
 		return (this.edge_type != EDGE_TYPE.OBSTACLE && this.edge_type != EDGE_TYPE.BORDER && !this.traversed);
 	}

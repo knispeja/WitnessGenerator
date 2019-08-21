@@ -17,13 +17,18 @@ class MouseTracker { // Disposable
 							event.mozMovementY      ||
 							event.webkitMovementY   ||
 							0;
+			
+			if (delta_x == 0 && delta_y == 0) {
+				return;
+			}
+			
 			var delta_x_mag = Math.abs(delta_x);
 			var delta_y_mag = Math.abs(delta_y);
 
 			var pixels;
 			var direction;
 			if (delta_x_mag > delta_y_mag) {
-				pixels = delta_x;
+				pixels = delta_x_mag;
 				if (delta_x > 0) {
 					direction = DIRECTION.EAST;
 				}
@@ -32,7 +37,7 @@ class MouseTracker { // Disposable
 				}
 			}
 			else {
-				pixels = delta_y;
+				pixels = delta_y_mag;
 				if (delta_y > 0) {
 					direction = DIRECTION.SOUTH;
 				}

@@ -5,21 +5,22 @@ function on_attempted_move(pixels, direction) {
 	}
 
 	var path_head = puzzle.get_head_of_path();
-	if (!path_head_is_node) {
-		if (!path_display.move_edge_pixels_forward_if_no_step(pixels, direction)) {
-			return true;
-		}
-	}
 
 	var new_path_object;
 	if (flip_direction(direction) == last_direction_moved()) {
-		move_backwards();
+		if (path_head_is_node) {
+			move_backwards();
+		}
+		else if (path_display.move_edge_pixels_backward_if_no_step(-pixels, direction)) {
+			move_backwards();
+		}
+
 		return true;
 	}
 
 	if (path_head_is_node) {
 		var new_edge = path_head.get_edge(direction);
-		if (!new_edge.is_traversible()) {
+		if (!new_edge.is_partially_traversible()) {
 			return false;
 		}
 		new_path_object = new_edge;
@@ -27,8 +28,12 @@ function on_attempted_move(pixels, direction) {
 		if (is_vertical(direction) != path_head.is_vertical) {
 			return false;
 		}
+
 		new_path_object = path_head.get_other_connecting_node(puzzle.path[puzzle.path.length - 2]);
-		if (new_path_object.traversed) {
+		if (!path_display.move_edge_pixels_forward_if_no_step(pixels, direction, path_head.edge_type == EDGE_TYPE.OBSTACLE)) {
+			return !new_path_object.traversed;
+		}
+		else if (path_head.edge_type == EDGE_TYPE.OBSTACLE || new_path_object.traversed) {
 			return false;
 		}
 	}
