@@ -66,9 +66,12 @@ class PathDisplay { // Disposable
 		var new_length = edge_path_length_current + pixels;
 		
 		var overflow = false;
-		if (new_length >= max_length || new_length <= 0) {
+		if (new_length >= max_length) {
 			overflow = true;
 			new_length = max_length;
+		}
+		else if (new_length <= 0) {
+			return true;
 		}
 
 		this.set_edge_length(graphics_head, direction, new_length);
