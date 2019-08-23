@@ -45,22 +45,44 @@ class PathDisplay { // Disposable
 		}
 	}
 
+	move_node_pixels_backward_if_no_step(pixels, direction) {
+		return this.move_node_pixels_forward_if_no_step(-pixels, flip_direction(direction));
+	}
+
+	move_node_pixels_forward_if_no_step(pixels, direction) {
+		if (puzzle.get_head_of_path().is_corner()) {
+			return true;
+		}
+
+		return this.move_pixels_forward_if_no_step(pixels, direction, false, true);
+	}
+
 	move_edge_pixels_backward_if_no_step(pixels, direction) {
-		return this.move_edge_pixels_forward_if_no_step(-pixels, flip_direction(direction), false);
+		return this.move_edge_pixels_forward_if_no_step(-pixels, flip_direction(direction), false, false);
+	}
+
+	move_edge_pixels_forward_if_no_step(pixels, direction, is_obstacle) {
+		return this.move_pixels_forward_if_no_step(pixels, direction, is_obstacle, false)
 	}
 
 	// Assumes path head is an edge, and we are moving forwards
 	// Returns boolean: whether or not the pixels send the movement over a step
-	move_edge_pixels_forward_if_no_step(pixels, direction, is_obstacle) {
+	move_pixels_forward_if_no_step(pixels, direction, is_obstacle, is_node) {
 		var graphics_head = this.path_objects[this.path_objects.length - 1];
 		var dir_is_vertical = is_vertical(direction);
 		var length_prop = dir_is_vertical ? 'height' : 'width';
 		var edge_path_length_current = parseFloat(graphics_head.getAttributeNS(null, length_prop));
 
-		var max_length = cfg.edge_spacing - cfg.edge_thickness;
-		if (is_obstacle) {
-			max_length -= cfg.obstacle_gap_size;
-			max_length /= 2;
+		var max_length;
+		if (is_node) {
+			max_length = cfg.edge_thickness;
+		}
+		else {
+			max_length = cfg.edge_spacing - cfg.edge_thickness;
+			if (is_obstacle) {
+				max_length -= cfg.obstacle_gap_size;
+				max_length /= 2;
+			}
 		}
 
 		var new_length = edge_path_length_current + pixels;
@@ -96,18 +118,26 @@ class PathDisplay { // Disposable
 
 	move_forward_to() {
 		// Clone graphics object of traversible and paint with path color
-		var old_rect = puzzle.get_head_of_path().graphics_object;
+		var path_head = puzzle.get_head_of_path();
+		var old_rect = path_head.graphics_object;
 		var path_edge = clone_svg_node(old_rect);
 		path_edge.setAttributeNS(null, 'fill', cfg.path_color);
-		if (!path_head_is_node) {
-			var old_path_node = puzzle.path[puzzle.path.length - 2];
+
+		if (!(path_head.node_type != NODE_TYPE.NODE && path_head.is_corner()))
+		{
+			var old_path_obj = puzzle.path[puzzle.path.length - 2];
 			var new_edge_length = 1;
-			if (old_path_node.node_type == NODE_TYPE.START) {
+			if (!path_head_is_node) { // New path head
+				if (puzzle.path.length > 2) {
+					var old_graphics_head = this.path_objects[this.path_objects.length - 1];
+					this.set_edge_length(old_graphics_head, directions_moved[directions_moved.length - 2], cfg.edge_thickness);
+				}
+			}
+			else if (old_path_obj.node_type == NODE_TYPE.START) {
 				new_edge_length = cfg.start_node_radius - cfg.edge_thickness/2;
 			}
 
-			var new_path_edge = puzzle.get_head_of_path();
-			var direction = old_path_node.get_direction_of_edge(new_path_edge);
+			var direction = last_direction_moved();
 			this.set_edge_length(path_edge, direction, new_edge_length);
 		}
 

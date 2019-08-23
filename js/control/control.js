@@ -8,7 +8,7 @@ function on_attempted_move(pixels, direction, recursion_safety) {
 
 	var new_path_object;
 	if (flip_direction(direction) == last_direction_moved()) {
-		if (path_head_is_node) {
+		if (path_head_is_node && path_display.move_node_pixels_backward_if_no_step(pixels, direction)) {
 			move_backwards();
 		}
 		else if (path_display.move_edge_pixels_backward_if_no_step(pixels, direction)) {
@@ -19,6 +19,12 @@ function on_attempted_move(pixels, direction, recursion_safety) {
 	}
 
 	if (path_head_is_node) {
+		if (path_head.node_type != NODE_TYPE.START &&
+			!path_display.move_node_pixels_forward_if_no_step(pixels, direction))
+		{
+			return false;
+		}
+
 		var new_edge = path_head.get_edge(direction);
 		if (!new_edge.is_partially_traversible()) {
 			return false;
