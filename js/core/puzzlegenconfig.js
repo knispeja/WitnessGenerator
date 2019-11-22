@@ -3,8 +3,9 @@ class PuzzleGenerationConfiguration {
         var rng = new Math.seedrandom(); // Avoid affecting Math.random() in this method
         if (url_params.width) {
             this.width_in_cells = parseInt(url_params.width);
-        } else {
-            this.width_in_cells = random_integer_between(3, 7, rng);
+        } 
+        else {
+            this.width_in_cells = random_integer_between(3, 5, rng);
             url_params.width = this.width_in_cells;
             addUrlParameter('width', url_params.width);
         }

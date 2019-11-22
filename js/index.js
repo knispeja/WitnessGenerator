@@ -59,7 +59,7 @@ window.onload = async function() {
 	}
 
 	puzzle.on_solve_fxn = () => {
-		const config = {
+		const confetti_config = {
 			angle: 90,
 			spread: 180,
 			startVelocity: 45,
@@ -71,7 +71,7 @@ window.onload = async function() {
 			height: "10px",
 			colors: ["#a864fd", "#29cdff", "#78ff44", "#ff718d", "#fdff6a"]
 		  };
-		confetti(document.body, config);
+		confetti(document.body, confetti_config);
 	}
 }
 
