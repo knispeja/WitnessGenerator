@@ -52,5 +52,5 @@ function draw_half_circle(center_x, center_y, radius, direction) {
 	var move_to_corner = `M${center_x + arc_dx} ${center_y + arc_dy}`;
 	var arc = `a${radius} ${radius} 0 0 ${sweep_flag} ${-arc_dx * 2} ${-arc_dy * 2} z`;
 
-	return append_svg_node(svg, 'path', {d: `${move_to_corner} ${arc}`, fill: 'white'});
+	return append_svg_node(svg, 'path', {d: `${move_to_corner} ${arc}`, fill: cfg.path_color});
 }
