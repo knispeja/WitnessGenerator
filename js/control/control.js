@@ -60,6 +60,7 @@ function on_attempted_move(pixels, direction, recursion_safety) {
 		if (puzzle.is_path_valid()) {
 			path_display.on_solve();
 			puzzle.on_solve();
+			remove_event_listeners();
 		}
 	}
 
@@ -104,16 +105,19 @@ function on_stop_drawing() {
 		return;
 	}
 
-	// Remove event listeners
-	document.body.removeEventListener('click', on_stop_drawing, true);
-	mouse_tracker.dispose();
-	keyboard_tracker.dispose();
+	remove_event_listeners();
 
 	// Stop drawing
 	path_display.dispose();
 
 	reset_path();
 	puzzle.reset_path();
+}
+
+function remove_event_listeners() {
+	document.body.removeEventListener('click', on_stop_drawing, true);
+	mouse_tracker.dispose();
+	keyboard_tracker.dispose();
 }
 
 function reset_path() {
