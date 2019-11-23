@@ -253,16 +253,21 @@ class Puzzle {
 					var existing_squares_in_region_weight = 0.24;
 					odds_of_square += existing_squares_in_region_weight/(squares_generated_in_region + 1);
 
-					var untraversible_edge_weight = 0.05;
+					var untraversible_edge_weight = 0.08;
 					odds_of_square += (
-						cell.get_non_null_adjacent_edges().filter(function(edge) { return edge.is_traversible(); }).length
+						cell.get_non_null_adjacent_edges().filter(function(edge) { return !edge.is_traversible(); }).length
 						/ (4/untraversible_edge_weight)
 					);
 
-					var traversed_edge_weight = 0.15;
+					var traversed_edge_weight = 0.10;
 					odds_of_square += (
 						cell.get_non_null_adjacent_edges().filter(function(edge) { return edge.traversed; }).length
 						/ (4/traversed_edge_weight)
+					);
+
+					var regions_with_squares_weight = 0.02;
+					odds_of_square += (
+						regions_with_squares_weight * (regions_with_squares / this.regions.length)
 					);
 
 					if (last_cell_given_square != null) {
