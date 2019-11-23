@@ -153,13 +153,13 @@ class Puzzle {
 	}
 
 	generate_whimsical_path(target_path_length) {
-		var result = this.generate_path_from_node_recursive(target_path_length, 0, this.start_node, null);
+		var result = this.generate_path_from_node_recursive(target_path_length, 0, this.start_node);
 		if (!result) {
 			throw "Failed to generate path, something went wrong";
 		}
 	}
 
-	generate_path_from_node_recursive(target_path_length, current_path_length, current_node, current_edge) {
+	generate_path_from_node_recursive(target_path_length, current_path_length, current_node) {
 		if (current_node.traversed) {
 			return false;
 		}
@@ -171,34 +171,33 @@ class Puzzle {
 			return true;
 		}
 		
-		var edges = current_node.get_adjacent_edges();
+		// Choose an edge and go with it
+		var edges = current_node.get_adjacent_traversible_edges();
 		while (true) {
 			if (edges.length <= 0) {
-				this.path.pop().traversed = false;
+				this.path.pop().traversed = false; // Untraverse node
 				return false;
 			}
 			var edge_index = random_array_index(edges);
-			var edge = edges.splice(edge_index, 1)[0];
+			var edge = edges[edge_index];
 
-			if (this.generate_path_from_edge_recursive(target_path_length, current_path_length, current_node, edge)) {
+			// Continue from edge
+			this.set_traversed(edge);
+			var new_node = edge.get_other_connecting_node(current_node);
+			if (!this.generate_path_from_node_recursive(target_path_length, current_path_length + 1, new_node)) {
+				this.path.pop().traversed = false; // Untraverse edge
+			}
+			
+			if (edge.traversed)
+			{
 				break;
 			}
+
+			// Remove edge from list
+			edges.splice(edge_index, 1);
 		}
 
 		return true;
-	}
-
-	generate_path_from_edge_recursive(target_path_length, current_path_length, current_node, current_edge) {
-		if (!current_edge.is_traversible()) {
-			return false;
-		}
-
-		this.set_traversed(current_edge);
-		var new_node = current_edge.get_other_connecting_node(current_node);
-		if (!this.generate_path_from_node_recursive(target_path_length, current_path_length + 1, new_node)) {
-			this.path.pop().traversed = false;
-		}
-		return current_edge.traversed;
 	}
 
 	compute_regions() {

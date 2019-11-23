@@ -5,7 +5,7 @@ class PuzzleGenerationConfiguration {
             this.width_in_cells = parseInt(url_params.width);
         } 
         else {
-            this.width_in_cells = random_integer_between(3, 5, rng);
+            this.width_in_cells = random_integer_between(3, 6, rng);
             url_params.width = this.width_in_cells;
             addUrlParameter('width', url_params.width);
         }
@@ -14,12 +14,14 @@ class PuzzleGenerationConfiguration {
             this.height_in_cells = parseInt(url_params.height);
         }
         else {
-            this.height_in_cells = FORCE_SQUARE_PUZZLES ? this.width_in_cells : random_integer_between(3, 5, rng);
+            this.height_in_cells = FORCE_SQUARE_PUZZLES ? this.width_in_cells : random_integer_between(4, 6, rng);
             url_params.height = this.height_in_cells;
             addUrlParameter('height', url_params.height);
         }
 
-    	this.min_path_length_generated = this.width_in_cells * this.height_in_cells;
+        this.min_path_length_generated =
+            this.width_in_cells * this.height_in_cells 
+            - (Math.min(this.width_in_cells, this.height_in_cells) - 3) * 2;
 
         this.disable_pellets = !stringToBoolean(url_params.pellets, true);
         this.disable_obstacles = !stringToBoolean(url_params.obstacles, true);

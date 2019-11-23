@@ -41,6 +41,12 @@ class Node {
 		);
 	}
 
+	get_adjacent_traversible_edges() {
+		return this.get_adjacent_edges().filter(
+			edge => edge.is_traversible()
+		);
+	}
+
 	get_adjacent_edges() {
 		return [this.north, this.east, this.south, this.west];
 	}

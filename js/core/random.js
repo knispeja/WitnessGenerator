@@ -50,6 +50,10 @@ function random_integer_between(min, max, rng) {
 		throw "First argument to random_integer_between should be less than the second";
 	}
 
+	if (min == max) {
+		return min;
+	}
+
 	var random_value;
 	if (rng === undefined) {
 		ensure_seeded();
