@@ -2,7 +2,7 @@ const DEBUG = false;
 const GENERATION_SPEED_TEST = false;
 const GENERATION_TIME_MAX_MS = 1000;
 
-const FORCE_SQUARE_PUZZLES = true;
+const FORCE_SQUARE_PUZZLES = false;
 const TIMES_TO_REGENERATE = 15; // 0 turns off regeneration effect
 
 // How many inputs in one direction are needed to move in that direction

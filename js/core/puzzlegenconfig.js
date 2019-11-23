@@ -27,6 +27,7 @@ class PuzzleGenerationConfiguration {
         this.disable_extra_end_nodes = !stringToBoolean(url_params.extraterminals, true);
         
         // Dictates whether the colored squares will be in more than two colors
-        this.black_white_mode = true;
+        var should_disable_bw_mode = this.width_in_cells <= 3 ? 0 : random_integer_between(0, 2);
+        this.black_white_mode = should_disable_bw_mode == 1 ? false : true;
     }
 }
