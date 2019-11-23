@@ -153,13 +153,13 @@ class Puzzle {
 	}
 
 	generate_whimsical_path(target_path_length) {
-		var result = this.generate_path_from_node_recursive(target_path_length, 0, this.start_node);
+		var result = this.generate_path_from_node_recursive(target_path_length, 0, this.start_node, null);
 		if (!result) {
 			throw "Failed to generate path, something went wrong";
 		}
 	}
 
-	generate_path_from_node_recursive(target_path_length, current_path_length, current_node) {
+	generate_path_from_node_recursive(target_path_length, current_path_length, current_node, last_edge) {
 		if (current_node.traversed) {
 			return false;
 		}
@@ -172,25 +172,55 @@ class Puzzle {
 		}
 		
 		// Choose an edge and go with it
-		var edges = current_node.get_adjacent_traversible_edges();
-		while (true) {
-			if (edges.length <= 0) {
-				this.path.pop().traversed = false; // Untraverse node
-				return false;
+		var all_edges = current_node.get_adjacent_edges();
+		var edges = all_edges.filter(
+			edge => edge.is_traversible()
+		);
+
+		// Heuristic to avoid moving into a loop created by the path
+		if (last_edge != null) {
+
+			current_node.traversed_direction_reverse = current_node.get_direction_of_edge(last_edge);
+
+			// There are only three instances in which there are only two options for where to move:
+			//    1. This node is the start node, and we are in the corner (covered by last_edge being null)
+			//    2. This node is up against the edge of the puzzle (the node we try to get will be null)
+			//    3. This node is up against part of the puzzle we have already traversed -- this is what we care about
+			if (edges.length == 3) {
+				var node_directly_ahead = current_node.get_connected_node(
+					flip_direction(current_node.get_direction_of_edge(last_edge))
+				);
+
+				if (node_directly_ahead != null && node_directly_ahead != this.start_node && node_directly_ahead.traversed)
+				{
+					edges = [current_node.get_edge(node_directly_ahead.traversed_direction_reverse)];
+				}
 			}
+		}
+
+		if (edges.length <= 0) {
+			this.path.pop().traversed = false; // Untraverse node
+			return false;
+		}
+
+		while (true) {
 			var edge_index = random_array_index(edges);
 			var edge = edges[edge_index];
 
 			// Continue from edge
 			this.set_traversed(edge);
 			var new_node = edge.get_other_connecting_node(current_node);
-			if (!this.generate_path_from_node_recursive(target_path_length, current_path_length + 1, new_node)) {
+			if (!this.generate_path_from_node_recursive(target_path_length, current_path_length + 1, new_node, edge)) {
 				this.path.pop().traversed = false; // Untraverse edge
 			}
 			
-			if (edge.traversed)
-			{
+			if (edge.traversed) {
 				break;
+			}
+
+			if (edges.length <= 1) {
+				this.path.pop().traversed = false; // Untraverse node
+				return false;
 			}
 
 			// Remove edge from list
