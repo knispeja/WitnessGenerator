@@ -90,26 +90,32 @@ function force_solve() {
 
 	path_display = new PathDisplay(start_node_graphics_object_global);
 	puzzle.set_traversed(puzzle.start_node);
+	force_solve_recursive(puzzle.start_node);
+}
 
-	var current_node = puzzle.start_node;
-	while (current_node.node_type != NODE_TYPE.END) {
-		var next_edge = current_node
-			.get_adjacent_edges()
-			.filter(edge => edge.part_of_solution && !edge.traversed)
-			[0];
-		
-		var next_direction = current_node.get_direction_of_edge(next_edge);
-
-		var new_node = current_node;
-		while (!path_head_is_node || current_node == new_node)
+function force_solve_recursive(current_node) {
+	if (current_node.node_type == NODE_TYPE.END) {
+		if (puzzle.is_path_valid())
 		{
-			on_attempted_move(10, next_direction);
-			new_node = puzzle.get_head_of_path();
+			return;
 		}
-
-
-		current_node = new_node;
 	}
+
+	var next_edge = current_node
+		.get_adjacent_edges()
+		.filter(edge => edge.part_of_solution && !edge.traversed)
+		[0];
+	
+	var next_direction = current_node.get_direction_of_edge(next_edge);
+
+	var new_node = current_node;
+	while (!path_head_is_node || current_node == new_node)
+	{
+		on_attempted_move(10, next_direction);
+		new_node = puzzle.get_head_of_path();
+	}
+	
+	setTimeout(function() { force_solve_recursive(new_node) }, 10);
 }
 
 // Begin drawing path
