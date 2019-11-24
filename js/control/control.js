@@ -87,6 +87,7 @@ function force_solve() {
 	}
 
 	on_stop_drawing();
+	set_give_up_confetti();
 
 	path_display = new PathDisplay(start_node_graphics_object_global);
 	puzzle.set_traversed(puzzle.start_node);

@@ -11,6 +11,8 @@
 
 	<!-- My scripts -->
 	<script src="js/core/constants.js"></script>
+	<script src="js/core/confetticonfig.js"></script>
+
 	<script src="js/core/utils.js"></script>
 	<script src="js/core/random.js"></script>
 	<script src="js/core/puzzledrawconfig.js"></script>
@@ -36,7 +38,7 @@
 <body>
 	<div class="button_container">
 		<a class="push_button light" href="/WitnessGenerator"><b>Regenerate</b></a>
-		<a class="push_button light" onclick="force_solve()"><b>Give up</b></a>
+		<a id="give_up_target" class="push_button light" onclick="force_solve()"><b>Give up</b></a>
 	</div>
 </body>
 </html>

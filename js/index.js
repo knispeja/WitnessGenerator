@@ -59,19 +59,7 @@ window.onload = async function() {
 	}
 
 	puzzle.on_solve_fxn = () => {
-		const confetti_config = {
-			angle: 90,
-			spread: 180,
-			startVelocity: 45,
-			elementCount: 75,
-			dragFriction: 0.1,
-			duration: 3500,
-			stagger: 0,
-			width: "10px",
-			height: "10px",
-			colors: ["#a864fd", "#29cdff", "#78ff44", "#ff718d", "#fdff6a"]
-		  };
-		confetti(document.body, confetti_config);
+		confetti_helper();
 	}
 }
 
