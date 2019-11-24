@@ -9,20 +9,15 @@ class MouseTracker { // Disposable
 	};
 
 	on_touch_move() {
-		try {
-			var current_x = event.originalEvent.changedTouches[0].pageX;
-			var current_y = event.originalEvent.changedTouches[0].pageY;
+		var current_x = event.changedTouches[0].pageX;
+		var current_y = event.changedTouches[0].pageY;
 
-			if (this.previous_x != undefined) {
-				this.on_move(current_x - this.previous_x, current_y - this.previous_y);
-			}
-
-			this.previous_x = current_x;
-			this.previous_y = current_y;
-
-		} catch {
-			this.on_move(5, 0);
+		if (this.previous_x != undefined) {
+			this.on_move(current_x - this.previous_x, current_y - this.previous_y);
 		}
+
+		this.previous_x = current_x;
+		this.previous_y = current_y;
 	}
 
 	on_mouse_move() {
