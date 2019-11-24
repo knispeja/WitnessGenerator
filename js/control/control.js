@@ -119,6 +119,14 @@ function force_solve_recursive(current_node) {
 }
 
 // Begin drawing path
+function on_touch_move(event) {
+	if (!currently_drawing_path || mouse_tracker == null) {
+		return;
+	}
+
+	mouse_tracker.on_touch_move(event);
+}
+
 function on_click_start_node(start_node_graphics_object) {
 	if (currently_drawing_path) {
 		return;

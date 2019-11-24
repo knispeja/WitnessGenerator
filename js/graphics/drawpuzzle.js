@@ -147,8 +147,9 @@ function draw_start_node(node) {
 	var x = cfg.edge_spacing * node.x + half_edge_thickness;
 	var y = cfg.edge_spacing * node.y + half_edge_thickness;
 	var on_click = "on_click_start_node(this);"; // Give the start node an action on click, defined in control.js
+	var on_move = "on_touch_move(event);";
 	start_node_graphics_object_global = 
-		append_svg_node(svg, 'circle', { cx: x, cy: y, r: cfg.start_node_radius, fill: cfg.color, onmousedown: on_click, ontouchstart: on_click, ontouchend: undefined });
+		append_svg_node(svg, 'circle', { cx: x, cy: y, r: cfg.start_node_radius, fill: cfg.color, onmousedown: on_click, ontouchstart: on_click, ontouchmove: on_move, ontouchend: undefined });
 }
 
 // Draw the nub sticking out of the end node if it is on a flat edge
