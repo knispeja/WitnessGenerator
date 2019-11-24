@@ -130,10 +130,8 @@ function on_click_start_node(start_node_graphics_object) {
 	path_display = new PathDisplay(start_node_graphics_object);
 	puzzle.set_traversed(puzzle.start_node);
 
-	// Add event listeners
 	document.body.addEventListener('click', on_stop_drawing, true);
-	document.body.addEventListener('touchend', on_stop_drawing, true);
-	document.body.addEventListener('touchcancel', on_stop_drawing, true);
+
 	keyboard_tracker = new KeyboardTracker();
 	mouse_tracker = new MouseTracker();
 }
@@ -155,8 +153,6 @@ function on_stop_drawing() {
 
 function remove_event_listeners() {
 	document.body.removeEventListener('click', on_stop_drawing, true);
-	document.body.removeEventListener('touchend', on_stop_drawing, true);
-	document.body.removeEventListener('touchcancel', on_stop_drawing, true);
 
 	if (mouse_tracker != null)
 	{
