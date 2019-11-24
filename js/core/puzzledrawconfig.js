@@ -41,12 +41,13 @@ class PuzzleDrawConfiguration {
 		}
 
 		// Get the bounding box of the SVG element to size
-		var rect = svg.getBoundingClientRect();
-		var smallest_dimension_of_svg = Math.min(rect.height, rect.width);
-		var largest_dimension_of_puzzle = Math.max(generation_cfg.height_in_cells, generation_cfg.width_in_cells);
+		var svgBounds = svg.getBoundingClientRect();
 
 		// Length and thickness of an edge between two nodes
-		this.edge_spacing = smallest_dimension_of_svg / largest_dimension_of_puzzle;
+		this.edge_spacing = Math.min(
+			svgBounds.height / generation_cfg.height_in_cells,
+			svgBounds.width / generation_cfg.width_in_cells
+		);
 		this.edge_thickness = this.edge_spacing / 4;
 
 		// Size of the gap placed in an edge for an obstacle

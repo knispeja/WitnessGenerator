@@ -17,37 +17,45 @@ html, body {
 }
   
 svg {
-    width: 80%;
-    height: 80%;
+    width: 73%;
+    height: 73%;
     overflow: visible;
     display: block;
     margin: 0 auto;
     shape-rendering: crispEdges;
 }
 
+.button_container {
+    position: absolute;
+    top: 0;
+    left: 0;
+
+    padding: 15px;
+}
+
 .push_button {
     position: relative;
-    width:220px;
-    height:40px;
-    text-align:center;
-    color:#FFF;
-    text-decoration:none;
-    line-height:43px;
-    font-family:'Oswald', Helvetica;
+
+    width: 190px;
+    height: 40px;
+    text-align: center;
+    color: #FFF;
+    text-decoration: none;
+    line-height: 43px;
+    font-family: 'Oswald', Helvetica;
     display: block;
-    margin: 30px;
 }
 .push_button:before {
     background:#f0f0f0;
     background-image:-webkit-gradient(linear, 0% 0%, 0% 100%, from(#D0D0D0), to(#f0f0f0));
     
-    -webkit-border-radius:5px;
-    -moz-border-radius:5px;
-    border-radius:5px;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    border-radius: 5px;
     
-    -webkit-box-shadow:0 1px 2px rgba(0, 0, 0, .5) inset, 0 1px 0 #FFF; 
-    -moz-box-shadow:0 1px 2px rgba(0, 0, 0, .5) inset, 0 1px 0 #FFF; 
-    box-shadow:0 1px 2px rgba(0, 0, 0, .5) inset, 0 1px 0 #FFF;
+    -webkit-box-shadow: 0 1px 2px rgba(0, 0, 0, .5) inset, 0 1px 0 #FFF; 
+    -moz-box-shadow: 0 1px 2px rgba(0, 0, 0, .5) inset, 0 1px 0 #FFF; 
+    box-shadow: 0 1px 2px rgba(0, 0, 0, .5) inset, 0 1px 0 #FFF;
     
     position: absolute;
     content: "";
@@ -57,9 +65,9 @@ svg {
 }
 
 .push_button:active {
-    box-shadow:0 1px 0 rgba(255, 255, 255, .5) inset, 0 -1px 0 rgba(255, 255, 255, .1) inset;
-    -webkit-box-shadow:0 1px 0 rgba(255, 255, 255, .5) inset, 0 -1px 0 rgba(255, 255, 255, .1) inset;
-    top:5px;
+    box-shadow: 0 1px 0 rgba(255, 255, 255, .5) inset, 0 -1px 0 rgba(255, 255, 255, .1) inset;
+    -webkit-box-shadow: 0 1px 0 rgba(255, 255, 255, .5) inset, 0 -1px 0 rgba(255, 255, 255, .1) inset;
+    top: 5px;
 }
 .push_button:active:before{
     top: -11px;
@@ -69,9 +77,9 @@ svg {
 
 .light {
     color: #1F262A;
-    text-shadow:-1px -1px 0 #ADD9D1;
+    text-shadow: -1px -1px 0 #ADD9D1;
     background: #1F262A;
-    border:1px solid #4F5A5F;
+    border: 1px solid #4F5A5F;
     
     background-image:-webkit-linear-gradient(top, #BFE1F0, #4F5A5F);
     background-image:-moz-linear-gradient(top, #BFE1F0, #4F5A5F);
@@ -79,13 +87,13 @@ svg {
     background-image:-o-linear-gradient(top, #BFE1F0, #4F5A5F);
     background-image:linear-gradient(to bottom, #BFE1F0, #4F5A5F);
     
-    -webkit-border-radius:5px;
-    -moz-border-radius:5px;
-    border-radius:5px;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    border-radius: 5px;
     
-    -webkit-box-shadow:0 1px 0 rgba(255, 255, 255, .5) inset, 0 -1px 0 rgba(255, 255, 255, .1) inset, 0 4px 0 #32373F, 0 4px 2px rgba(0, 0, 0, .5);
-    -moz-box-shadow:0 1px 0 rgba(255, 255, 255, .5) inset, 0 -1px 0 rgba(255, 255, 255, .1) inset, 0 4px 0 #32373F, 0 4px 2px rgba(0, 0, 0, .5);
-    box-shadow:0 1px 0 rgba(255, 255, 255, .5) inset, 0 -1px 0 rgba(255, 255, 255, .1) inset, 0 4px 0 #32373F, 0 4px 2px rgba(0, 0, 0, .5);
+    -webkit-box-shadow: 0 1px 0 rgba(255, 255, 255, .5) inset, 0 -1px 0 rgba(255, 255, 255, .1) inset, 0 4px 0 #32373F, 0 4px 2px rgba(0, 0, 0, .5);
+    -moz-box-shadow: 0 1px 0 rgba(255, 255, 255, .5) inset, 0 -1px 0 rgba(255, 255, 255, .1) inset, 0 4px 0 #32373F, 0 4px 2px rgba(0, 0, 0, .5);
+    box-shadow: 0 1px 0 rgba(255, 255, 255, .5) inset, 0 -1px 0 rgba(255, 255, 255, .1) inset, 0 4px 0 #32373F, 0 4px 2px rgba(0, 0, 0, .5);
 }
 
 .light:hover {
