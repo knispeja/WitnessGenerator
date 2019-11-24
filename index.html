@@ -4,10 +4,12 @@
 	<title>Puzzle Generator</title>
 	<link rel="stylesheet" type="text/css" href="css/index.css">
 
+	<!-- Stuff that isn't mine -->
 	<script src="js/lib/pSBC.js"></script>
 	<script src="js/lib/seedrandom.js"></script>
 	<script src="js/lib/confetti.js"></script>
 
+	<!-- My scripts -->
 	<script src="js/core/constants.js"></script>
 	<script src="js/core/utils.js"></script>
 	<script src="js/core/random.js"></script>
@@ -34,6 +36,7 @@
 <body>
 	<div class="button_container">
 		<a class="push_button light" href="/"><b>Regenerate</b></a>
+		<a class="push_button light" onclick="force_solve()"><b>Give up</b></a>
 	</div>
 </body>
 </html>

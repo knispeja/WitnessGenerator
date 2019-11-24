@@ -38,12 +38,21 @@ svg {
 
     width: 190px;
     height: 40px;
+    margin-bottom: 18px;
+
     text-align: center;
     color: #FFF;
     text-decoration: none;
     line-height: 43px;
     font-family: 'Oswald', Helvetica;
     display: block;
+
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
 }
 .push_button:before {
     background:#f0f0f0;

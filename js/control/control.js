@@ -81,6 +81,37 @@ function last_direction_moved() {
 	return directions_moved[directions_moved.length - 1];
 }
 
+function force_solve() {
+	if (path_display != null && path_display.completed) {
+		return;
+	}
+
+	on_stop_drawing();
+
+	path_display = new PathDisplay(start_node_graphics_object_global);
+	puzzle.set_traversed(puzzle.start_node);
+
+	var current_node = puzzle.start_node;
+	while (current_node.node_type != NODE_TYPE.END) {
+		var next_edge = current_node
+			.get_adjacent_edges()
+			.filter(edge => edge.part_of_solution && !edge.traversed)
+			[0];
+		
+		var next_direction = current_node.get_direction_of_edge(next_edge);
+
+		var new_node = current_node;
+		while (!path_head_is_node || current_node == new_node)
+		{
+			on_attempted_move(10, next_direction);
+			new_node = puzzle.get_head_of_path();
+		}
+
+
+		current_node = new_node;
+	}
+}
+
 // Begin drawing path
 function on_click_start_node(start_node_graphics_object) {
 	if (currently_drawing_path) {
@@ -116,9 +147,21 @@ function on_stop_drawing() {
 
 function remove_event_listeners() {
 	document.body.removeEventListener('click', on_stop_drawing, true);
-	mouse_tracker.dispose();
-	keyboard_tracker.dispose();
+
+	if (mouse_tracker != null)
+	{
+		mouse_tracker.dispose();
+	}
+
+	if (keyboard_tracker != null)
+	{
+		keyboard_tracker.dispose();
+	}
 }
+
+path_display = null;
+mouse_tracker = null;
+keyboard_tracker = null;
 
 function reset_path() {
 	currently_drawing_path = false;

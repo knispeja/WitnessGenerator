@@ -214,6 +214,7 @@ class Puzzle {
 			}
 			
 			if (edge.traversed) {
+				edge.part_of_solution = true;
 				break;
 			}
 

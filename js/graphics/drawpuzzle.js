@@ -147,7 +147,8 @@ function draw_start_node(node) {
 	var x = cfg.edge_spacing * node.x + half_edge_thickness;
 	var y = cfg.edge_spacing * node.y + half_edge_thickness;
 	var on_click = "on_click_start_node(this);"; // Give the start node an action on click, defined in control.js
-	append_svg_node(svg, 'circle', { cx: x, cy: y, r: cfg.start_node_radius, fill: cfg.color, onclick: on_click});
+	start_node_graphics_object_global = 
+		append_svg_node(svg, 'circle', { cx: x, cy: y, r: cfg.start_node_radius, fill: cfg.color, onclick: on_click});
 }
 
 // Draw the nub sticking out of the end node if it is on a flat edge

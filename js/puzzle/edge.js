@@ -7,6 +7,7 @@ class Edge {
 		this.cell1 = null;
 		this.cell2 = null;
 		this.traversed = false;
+		this.part_of_solution = false;
 		this.graphics_object = null;
 	}
 
