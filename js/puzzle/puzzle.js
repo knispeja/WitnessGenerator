@@ -172,9 +172,8 @@ class Puzzle {
 		}
 		
 		// Choose an edge and go with it
-		var all_edges = current_node.get_adjacent_edges();
-		var edges = all_edges.filter(
-			edge => edge.is_traversible()
+		var edges = current_node.get_adjacent_edges().filter(
+			edge => edge.is_traversible() && !edge.get_other_connecting_node(current_node).traversed
 		);
 
 		// Heuristic to avoid moving into a loop created by the path
@@ -186,7 +185,7 @@ class Puzzle {
 			//    1. This node is the start node, and we are in the corner (covered by last_edge being null)
 			//    2. This node is up against the edge of the puzzle (the node we try to get will be null)
 			//    3. This node is up against part of the puzzle we have already traversed -- this is what we care about
-			if (edges.length == 3) {
+			if (edges.length == 2) {
 				var node_directly_ahead = current_node.get_connected_node(
 					flip_direction(current_node.get_direction_of_edge(last_edge))
 				);
