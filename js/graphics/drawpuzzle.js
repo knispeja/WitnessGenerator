@@ -75,7 +75,7 @@ function draw_edges(node) {
 			}
 		
 			if (node.node_type == NODE_TYPE.END) {
-				draw_end_corner(x + cfg.edge_thickness/2, y + cfg.edge_thickness/2, vertical_direction, DIRECTION.EAST);
+				draw_end_corner(node, x + cfg.edge_thickness/2, y + cfg.edge_thickness/2, vertical_direction, DIRECTION.EAST);
 			}
 		}
 		else if (node.node_type == NODE_TYPE.END) {
@@ -98,7 +98,7 @@ function draw_edges(node) {
 				end_x += cfg.edge_thickness/2;
 				end_y += cfg.edge_thickness;
 			}
-			draw_end(end_x, end_y, direction_v, direction_h);
+			draw_end(node, end_x, end_y, direction_v, direction_h);
 		}
 
 		// Draw west corners
@@ -115,12 +115,12 @@ function draw_edges(node) {
 
 			// Draw corner end node
 			if (west_node.node_type == NODE_TYPE.END) {
-				draw_end_corner(west_corner_x - cfg.edge_thickness/2, y + cfg.edge_thickness/2, vertical_direction, DIRECTION.WEST);
+				draw_end_corner(node, west_corner_x - cfg.edge_thickness/2, y + cfg.edge_thickness/2, vertical_direction, DIRECTION.WEST);
 			}
 		}
 		else if (west_node.node_type == NODE_TYPE.END && west_node.west.edge_type == EDGE_TYPE.BORDER) {
 			// Draw west end node
-			draw_end(west_corner_x - cfg.edge_thickness, node.y * cfg.edge_spacing + cfg.edge_thickness/2, undefined, DIRECTION.WEST);
+			draw_end(west_node, west_corner_x - cfg.edge_thickness, node.y * cfg.edge_spacing + cfg.edge_thickness/2, undefined, DIRECTION.WEST);
 		}
 
 		var edge_color = DEBUG && node.west.traversed ? cfg.solution_color : cfg.color;
@@ -153,9 +153,11 @@ function draw_start_node(node) {
 }
 
 // Draw the nub sticking out of the end node if it is on a flat edge
-function draw_end(center_x, center_y, vertical_direction, horizontal_direction) {
-	append_svg_node(svg, 'rect', { x: center_x - cfg.edge_thickness/2, y: center_y - cfg.edge_thickness/2, width: cfg.edge_thickness, height: cfg.edge_thickness, fill: cfg.color });
-	
+function draw_end(node, center_x, center_y, vertical_direction, horizontal_direction) {
+	node.extra_graphics_objects.push(
+		append_svg_node(svg, 'rect', { x: center_x - cfg.edge_thickness/2, y: center_y - cfg.edge_thickness/2, width: cfg.edge_thickness, height: cfg.edge_thickness, fill: cfg.color })
+	);
+
 	var horizontal_mod = 0;
 	if (horizontal_direction == DIRECTION.EAST) {
 		horizontal_mod = 1;
@@ -172,11 +174,14 @@ function draw_end(center_x, center_y, vertical_direction, horizontal_direction) 
 
 	var circle_x = center_x + horizontal_mod * cfg.edge_thickness/2;
 	var circle_y = center_y + vertical_mod * cfg.edge_thickness/2;
-	append_svg_node(svg, 'circle', { cx: circle_x, cy: circle_y, r: cfg.edge_thickness/2, fill: cfg.color });
+
+	node.extra_graphics_objects.push(
+		append_svg_node(svg, 'circle', { cx: circle_x, cy: circle_y, r: cfg.edge_thickness/2, fill: cfg.color })
+	);
 }
 
 // Draw the nub sticking out of the end node if it is on a corner
-function draw_end_corner(center_x, center_y, vertical_direction, horizontal_direction) {
+function draw_end_corner(node, center_x, center_y, vertical_direction, horizontal_direction) {
 	var half_side_length = cfg.edge_thickness / 2;
 	var center_to_corner = Math.sqrt(2) * half_side_length;
 
@@ -185,9 +190,9 @@ function draw_end_corner(center_x, center_y, vertical_direction, horizontal_dire
 	var p_south = `${center_x},${center_y+center_to_corner}`;
 	var p_west = `${center_x-center_to_corner},${center_y}`;
 	var points = `${p_north} ${p_east} ${p_south} ${p_west}`;
-	append_svg_node(svg, 'polygon', { points: points, fill: cfg.color });
+	node.extra_graphics_objects.push(append_svg_node(svg, 'polygon', { points: points, fill: cfg.color }));
 
 	var circle_x = center_x + (horizontal_direction == DIRECTION.EAST ? 1 : -1) * center_to_corner/2;
 	var circle_y = center_y + (vertical_direction == DIRECTION.SOUTH ? 1 : -1) * center_to_corner/2;
-	append_svg_node(svg, 'circle', { cx: circle_x, cy: circle_y, r: cfg.edge_thickness/2, fill: cfg.color });
+	node.extra_graphics_objects.push(append_svg_node(svg, 'circle', { cx: circle_x, cy: circle_y, r: cfg.edge_thickness/2, fill: cfg.color }));
 }

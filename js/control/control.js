@@ -81,15 +81,19 @@ function last_direction_moved() {
 	return directions_moved[directions_moved.length - 1];
 }
 
+force_solving = false;
 function force_solve() {
-	if (path_display != null && path_display.completed) {
+	if (force_solving || path_display != null && path_display.completed) {
 		return;
 	}
+
+	force_solving = true;
 
 	on_stop_drawing();
 	set_give_up_confetti();
 
 	path_display = new PathDisplay(start_node_graphics_object_global);
+
 	puzzle.set_traversed(puzzle.start_node);
 	force_solve_recursive(puzzle.start_node);
 }

@@ -196,12 +196,22 @@ class PathDisplay { // Disposable
 	}
 
 	on_solve() {
+		// Cover up hole
+		//this.move_node_pixels_forward_if_no_step(cfg.edge_thickness / 2, last_direction_moved());
+
+		// Prevent further movement
 		this.completed = true;
 
 		// Change color of entire path
 		this.path_objects.forEach((path_object) => {
 			path_object.setAttributeNS(null, 'fill', cfg.solution_color)
 		});
+		var head_of_path = puzzle.get_head_of_path();
+		head_of_path.graphics_object.setAttributeNS(null, 'fill', cfg.solution_color);
+		head_of_path.extra_graphics_objects.forEach((path_object) => {
+			path_object.setAttributeNS(null, 'fill', cfg.solution_color)
+		});
+
 		this.start_node_overlay.setAttributeNS(null, 'fill', cfg.solution_color);
 
 		if (this.end_of_path != null)
