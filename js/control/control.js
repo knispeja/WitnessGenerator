@@ -81,13 +81,17 @@ function last_direction_moved() {
 	return directions_moved[directions_moved.length - 1];
 }
 
-force_solving = false;
+function set_force_solve_enabled(enabled) {
+	disable_force_solve = !enabled;
+};
+set_force_solve_enabled(false);
+
 function force_solve() {
-	if (force_solving || path_display != null && path_display.completed) {
+	if (disable_force_solve || path_display != null && path_display.completed) {
 		return;
 	}
 
-	force_solving = true;
+	disable_force_solve = true;
 
 	on_stop_drawing();
 	set_give_up_confetti();

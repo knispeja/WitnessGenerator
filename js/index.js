@@ -61,6 +61,8 @@ window.onload = async function() {
 	puzzle.on_solve_fxn = () => {
 		confetti_helper();
 	}
+
+	set_force_solve_enabled(true);
 }
 
 window.onbeforeunload = function() {
